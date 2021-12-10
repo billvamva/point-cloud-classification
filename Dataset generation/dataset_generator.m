@@ -1,6 +1,6 @@
 run("flight_data_generator.m")
-addpath('progressbar');
-addpath('saveAsJSON');
+addpath('../progressbar');
+addpath('../saveAsJSON');
 mess = 'Starting simulation'
 scene = uavScenario("UpdateRate",12,"ReferenceLocation",[75 -46 0]);
 
@@ -83,8 +83,8 @@ for idx = 0:size(flight_data.trajectory.random.coordinates, 1)-1
     move(plat,[flight_data.trajectory.random.coordinates(idx+1,:),zeros(1,6),eul2quat([flight_data.trajectory.random.angles(idx+1)+pi,0,pi]),zeros(1,3)])
     ptCloudOut = pctransform(pt,tform);
     view(player,ptCloudOut)
-    file_name = sprintf('Car_dataset/car_%d.pcd',idx+1);
-    pcwrite(ptCloudOut,file_name,'Encoding','binary')
+%     file_name = sprintf('Car_dataset/car_%d.pcd',idx+1);
+%     pcwrite(ptCloudOut,file_name,'Encoding','binary')
     % Update all sensors in the scene.
     updateSensors(scene)
 end

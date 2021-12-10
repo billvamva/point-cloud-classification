@@ -1,3 +1,6 @@
 Princeton/
+*_dataset/
 *.asv
-*.vscode
+*.viscid
+*.off
+*.stl

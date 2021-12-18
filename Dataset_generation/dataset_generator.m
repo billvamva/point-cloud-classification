@@ -1,6 +1,6 @@
 run("flight_data_generator.m")
-addpath('../progressbar');
-addpath('../saveAsJSON');
+addpath('../progressbar/');
+addpath('../saveAsJSON/');
 mess = 'Starting simulation'
 scene = uavScenario("UpdateRate",12,"ReferenceLocation",[75 -46 0]);
 
@@ -10,11 +10,11 @@ color.Green = [0.3922 0.8314 0.0745];
 color.Red = [1 0 0];
 addMesh(scene,"polygon",{[-20 -20; 20 -20; 20 20; -20 20],[-2 0]},color.Gray)
 
-% Load building polygons.
+% Load custom stl model.
 [f,v,n] = stlread('car.stl');
 scale = 1;
 translation = [0 0 0];
-points = (f.Points + translation)*scale;
+points = (f.Points*scale)+ translation;
 
 y_mount_angle = 25;
 rot = roty(-y_mount_angle);
@@ -56,15 +56,15 @@ ylim([-50 50])
 zlim([0 50])
 view([-110 30])
 axis equal
-% hold on
-% colormap("jet")
-% pt = pointCloud(nan(1,1,3));
-% scatterplot = scatter3(nan,nan,nan,1,[0.3020 0.7451 0.9333],...
-%     "Parent",plotFrames.UAV.Lidar);
-% scatterplot.XDataSource = "reshape(pt.Location(:,:,1),[],1)";
-% scatterplot.YDataSource = "reshape(pt.Location(:,:,2),[],1)";
-% scatterplot.ZDataSource = "reshape(pt.Location(:,:,3),[],1)";
-% scatterplot.CDataSource = "reshape(pt.Location(:,:,3),[],1) - min(reshape(pt.Location(:,:,3),[],1))";
+hold on
+colormap("jet")
+pt = pointCloud(nan(1,1,3));
+scatterplot = scatter3(nan,nan,nan,1,[0.3020 0.7451 0.9333],...
+    "Parent",plotFrames.UAV.Lidar);
+scatterplot.XDataSource = "reshape(pt.Location(:,:,1),[],1)";
+scatterplot.YDataSource = "reshape(pt.Location(:,:,2),[],1)";
+scatterplot.ZDataSource = "reshape(pt.Location(:,:,3),[],1)";
+scatterplot.CDataSource = "reshape(pt.Location(:,:,3),[],1) - min(reshape(pt.Location(:,:,3),[],1))";
 setup(scene)
 
 player = pcplayer([-50 50],[-50 50],[-10,30]);
@@ -83,11 +83,11 @@ for idx = 0:size(flight_data.trajectory.random.coordinates, 1)-1
     move(plat,[flight_data.trajectory.random.coordinates(idx+1,:),zeros(1,6),eul2quat([flight_data.trajectory.random.angles(idx+1)+pi,0,pi]),zeros(1,3)])
     ptCloudOut = pctransform(pt,tform);
     view(player,ptCloudOut)
-%     file_name = sprintf('Car_dataset/car_%d.pcd',idx+1);
+%     file_name = sprintf('Block_dataset/block_%d.pcd',idx+1);
 %     pcwrite(ptCloudOut,file_name,'Encoding','binary')
     % Update all sensors in the scene.
     updateSensors(scene)
 end
 % hold off
 mess = "Saving flight parameters"
-saveAsJSON(flight_data.trajectory.random,'Block_dataset/simulation_data.json')
+%saveAsJSON(flight_data.trajectory.random,'Block_dataset/simulation_data.json')

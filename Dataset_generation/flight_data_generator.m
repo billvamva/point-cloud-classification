@@ -9,6 +9,7 @@ flight_data.trajectory.circle = struct;
 flight_data.trajectory.diagonal = struct;
 flight_data.trajectory.random =  struct;
 
+show_trajs = false;
 n_points = 1000;
 
 %%% Circle Variables
@@ -26,7 +27,10 @@ coordinates = [x(:),y(:),z(:)];
 flight_data.trajectory.circle.coordinates = coordinates;
 flight_data.trajectory.circle.angles = theta;
 flight_data.trajectory.circle.parameters = parameters;
-
+if show_trajs
+    figure
+    scatter3(x,y,z)
+end
 %Line variables
 x_range = [-50 50];
 y_range = [-50 50];
@@ -42,7 +46,10 @@ coordinates = [x(:),y(:),z(:)];
 flight_data.trajectory.diagonal.coordinates = coordinates;
 flight_data.trajectory.diagonal.parameters = [x_range, y_range, height];
 
-
+if show_trajs
+    figure
+    scatter3(x,y,z)
+end
 %Random variables
 radius_range = [5 15];
 height_range = [5 10];
@@ -59,5 +66,7 @@ coordinates = [x(:),y(:),-z(:)];
 flight_data.trajectory.random.coordinates = coordinates;
 flight_data.trajectory.random.angles = theta;
 flight_data.trajectory.random.parameters = parameters;
-figure
-scatter3(x,y,z)
+if show_trajs
+    figure
+    scatter3(x,y,z)
+end

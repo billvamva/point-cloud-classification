@@ -1,0 +1,6 @@
+Princeton/
+*_dataset/
+*.asv
+*.viscid
+*.off
+*.stl

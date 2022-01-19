@@ -35,7 +35,16 @@ class range_image():
         return pcd
 
     def op3d(self, pcd, vox):
-        # Convert to Open3D point cloud
+        """Convert to open3d point cloud
+
+        Args:
+            pcd (pcd format): .pcd point cloud taken from matlab
+            vox (float): determines the downsampling of the point cloud
+
+        Returns:
+            o3d_pcd: open3d point cloud
+            xyz_load: numpy array of point cloud
+        """
         o3d_pcd = o3d.geometry.PointCloud(o3d.utility.Vector3dVector(np.asarray(pcd.points)))
 
         o3d_pcd = o3d_pcd.voxel_down_sample(voxel_size=vox)
@@ -45,6 +54,8 @@ class range_image():
         return o3d_pcd, xyz_load
     
     def plot_3d(self):
+        """Point Cloud Visualization
+        """
         o3d.visualization.draw_geometries([self.o3d_pcd])
     
     def center_pcd(self, points):
@@ -127,11 +138,14 @@ class range_image():
         return new_arr
     
     def show_image(self):
-        
+        """Range Image Visualization
+        """
         plt.imshow(self.image)
         plt.show()
     
     def save_image(self):
+        """Saves image to local directory
+        """
         fname = "./range_images/" + self.filename.split('.')[0] + '_range_image_' + self.method +'.png'
 
         fig = plt.figure(frameon=False)

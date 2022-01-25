@@ -20,9 +20,11 @@
 # if __name__ == "__main__":
 #    main(sys.argv[1:])
 # #
-from pypcd import pypcd
+import open3d as o3d
+import numpy as np
 
-print("testing")
-
-pc = pypcd.PointCloud.from_path(r"Dataset generation/Car_dataset/car_1.pcd")
-print(pc)
+print("Load a ply point cloud, print it, and render it")
+pcd = o3d.io.read_point_cloud("Simulation/Dataset_generation/Car_dataset/car_100.pcd")
+# print(pcd)
+# print(np.asarray(pcd.points).shape)
+o3d.visualization.draw_geometries([pcd])

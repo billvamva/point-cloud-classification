@@ -2,25 +2,36 @@
 clear all
 close all
 clc
-
+addpath('Dataset_generation/')
 color.Gray = 0.651*ones(1,3);
 color.Green = [0.3922 0.8314 0.0745];
 color.Red = [1 0 0];
 n_points = 30;
-height_range = [-.3 .3];
-ground = (height_range(2) - height_range(1)).*rand(n_points,n_points)+height_range(1);
-[X,Y] = ndgrid(0:1:n_points-1,0:1:n_points-1);
 
-% [f,v,n] = stlread('Dataset_generation/car_0219.stl');
-% x = f.Points(:,1);
-% y = f.Points(:,2);
-% z = f.Points(:,3);
-% figure
-% plot3(x,y,z)
+[f,v,n] = stlread('Dataset_generation/Models/Cube.stl');
+points = f.Points;
 scene = uavScenario("UpdateRate",12,"ReferenceLocation",[75 -46 0]);
-addMesh(scene,"surface",{X,Y,ground},color.Gray)
+
+[X,Y,Z] = generate_ground(-20,20,[-.3 .3]);
+addMesh(scene,"surface",{X,Y,Z},color.Gray)
+%addMesh(scene,"polygon",{[-2 -2; 2 -2 ; 2 2 ; -2 2],[0 5]},color.Red)
+addMesh(scene,'custom',{points,f.ConnectivityList},color.Green)
+% removeMesh(scene,1)
+show3D(scene)
+for i=1:100
+    removeMesh(scene,2)
+    points = rotate_target(f.Points);
+    addMesh(scene,'custom',{points,f.ConnectivityList}, color.Green)
+    show3D(scene)
+    pause(2)
+end
+
+% Set up platform mesh. Add a rotation to orient the mesh to the UAV body frame.
+
 % addMesh(scene,"custom",{f.Points,f.ConnectivityList},color.Green)
 % addMesh(scene,"polygon",{[-2 -2; 2 -2 ; 2 2 ; -2 2],[0 5]},color.Green)
+show3D(scene);
+addMesh(scene,"polygon",{[-2 -2; 2 -2 ; 2 2 ; -2 2],[0 10]},color.Green);
 show3D(scene);
 % 
 % pc = pcread("Car_dataset/car_269.pcd");

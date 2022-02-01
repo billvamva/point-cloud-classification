@@ -150,7 +150,7 @@ class Feature_Extractor():
         # create orb object
         orb = cv2.ORB_create()
         kp, des = orb.detectAndCompute(img,None)
-        np.savetxt('./orb_desc/' + ''.join(self.filename.split('_')[:2]), des, fmt='%d')
+        # np.savetxt('./orb_desc/' + ''.join(self.filename.split('_')[:2]), des, fmt='%d')
         return kp, des
     
     def match_orb_features(self, des1):
@@ -185,9 +185,18 @@ class Feature_Extractor():
 
 if __name__ == "__main__":
 
-    path = "./range_images/"
-    filename = "car_1_range_image_pbea.png"
-
+    path = "./test_range_images/"
+    filename = "block_1_-1-1.png"
+    
     feature_extractor = Feature_Extractor(path, filename, hog = False, glcm= False)
 
-    print(feature_extractor.matches)
+    print(dict(sorted(feature_extractor.matches.items(), key=lambda item: item[1])))
+    
+
+    # for file in os.listdir(path):
+
+    #     filename = os.fsdecode(file)
+
+    #     feature_extractor = Feature_Extractor(path, filename, hog = False, glcm= False)
+
+    #     print(feature_extractor.matches)

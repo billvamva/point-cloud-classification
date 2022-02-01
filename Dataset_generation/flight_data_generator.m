@@ -10,7 +10,7 @@ flight_data.trajectory.diagonal = struct;
 flight_data.trajectory.random =  struct;
 
 show_trajs = false;
-n_points = 100;
+n_points = 1000;
 
 %%% Circle Variables
 r=40;
@@ -51,7 +51,7 @@ if show_trajs
     scatter3(x,y,z)
 end
 %Random variables
-radius_range = [5 15];
+radius_range = [10 20];
 height_range = [5 10];
 parameters = [radius_range,height_range];
 

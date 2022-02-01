@@ -1,9 +1,4 @@
-function [scene,plat,lidar] = setup_scene(flight_data, y_mount_angle)
-
-    color.Gray = 0.651*ones(1,3);
-    color.Green = [0.3922 0.8314 0.0745];
-    color.Red = [1 0 0];
-
+function [scene,plat,lidar] = setup_scene(flight_data, y_mount_angle,color)
     scene = uavScenario("UpdateRate",1,"ReferenceLocation",[0 0 0]);
 
     plat = uavPlatform("UAV",scene,"ReferenceFrame","NED", ...

@@ -9,3 +9,5 @@ surf_test/
 *.dt2
 *.icloud
 *.skp
+.DS_Store
+*.png

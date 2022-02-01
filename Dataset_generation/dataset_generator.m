@@ -6,8 +6,8 @@ mess = 'Starting simulation'
 
 
 %Saving file and data json
-file_template = 'surf_test/block_%d.pcd';
-json_name = 'surf_test/simulation_data.json';
+file_template = 'testing/sphere_%d.pcd';
+json_name = 'Sphere_dataset/simulation_data.json';
 
 
 %Generate color identities for plotting
@@ -17,7 +17,7 @@ color.Red = [1 0 0];
 
 y_mount_angle = 25;
 
-[scene,plat,lidar] = setup_scene(flight_data, y_mount_angle);
+[scene,plat,lidar] = setup_scene(flight_data, y_mount_angle, color);
 
 %Add ground plane
 [X,Y,Z] = generate_ground(-20,20,[-.3 .3]);
@@ -27,7 +27,7 @@ addMesh(scene,"surface",{X,Y,Z},color.Gray)
 [f,v,n] = stlread('Models/Cube.stl');
 scale = 1;
 translation = [0 0 0];
-points = (f.Points*scale)+ translation;
+translated_target = (f.Points*scale)+ translation;
 
 %Camera transform for visualization of pc
 
@@ -36,7 +36,7 @@ trans = [0, 0, 0];
 tform = rigid3d(rot,trans);
 
 % Add initial target
-points = rotate_target(f.Points);
+points = rotate_target(translated_target);
 addMesh(scene,"custom",{points,f.ConnectivityList},color.Green)
 
 % Show the scenario.
@@ -46,20 +46,20 @@ ylim([-20 20])
 zlim([-1 15])
 
 [ax,plotFrames] = show3D(scene);
-xlim([-50 50])
-ylim([-50 50])
-zlim([-1 50])
-view([-110 30])
-axis equal
-hold on
-colormap("jet")
-pt = pointCloud(nan(1,1,3));
-scatterplot = scatter3(nan,nan,nan,1,[0.3020 0.7451 0.9333],...
-    "Parent",plotFrames.UAV.Lidar);
-scatterplot.XDataSource = "reshape(pt.Location(:,:,1),[],1)";
-scatterplot.YDataSource = "reshape(pt.Location(:,:,2),[],1)";
-scatterplot.ZDataSource = "reshape(pt.Location(:,:,3),[],1)";
-scatterplot.CDataSource = "reshape(pt.Location(:,:,3),[],1) - min(reshape(pt.Location(:,:,3),[],1))";
+% xlim([-50 50])
+% ylim([-50 50])
+% zlim([-1 50])
+% view([-110 30])
+% axis equal
+% hold on
+% colormap("jet")
+% pt = pointCloud(nan(1,1,3));
+% scatterplot = scatter3(nan,nan,nan,1,[0.3020 0.7451 0.9333],...
+%     "Parent",plotFrames.UAV.Lidar);
+% scatterplot.XDataSource = "reshape(pt.Location(:,:,1),[],1)";
+% scatterplot.YDataSource = "reshape(pt.Location(:,:,2),[],1)";
+% scatterplot.ZDataSource = "reshape(pt.Location(:,:,3),[],1)";
+% scatterplot.CDataSource = "reshape(pt.Location(:,:,3),[],1) - min(reshape(pt.Location(:,:,3),[],1))";
 
 
 setup(scene)
@@ -68,7 +68,7 @@ for idx = 0:size(flight_data.trajectory.random.coordinates, 1)-1
     [isupdated,lidarSampleTime, pt] = read(lidar);
     if isupdated
         % Use fast update to move platform visualization frames.
-        show3D(scene,"Time",lidarSampleTime,"Parent",ax,'FastUpdate',true);
+        show3D(scene,"Time",lidarSampleTime,"Parent",ax);
         % Refresh all plot data and visualize.
         refreshdata
         drawnow limitrate
@@ -90,7 +90,7 @@ for idx = 0:size(flight_data.trajectory.random.coordinates, 1)-1
     %Update ground and target
     removeMesh(scene,2)
     removeMesh(scene,1)
-    points = rotate_target(f.Points);
+    points = rotate_target(translated_target);
     addMesh(scene,'custom',{points,f.ConnectivityList}, color.Green)
     [X,Y,Z] = generate_ground(-20,20,[-.3 .3]);
     addMesh(scene,"surface",{X,Y,Z},color.Gray)

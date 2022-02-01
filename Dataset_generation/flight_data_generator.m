@@ -10,7 +10,7 @@ flight_data.trajectory.diagonal = struct;
 flight_data.trajectory.random =  struct;
 
 show_trajs = false;
-n_points = 1000;
+n_points = 100;
 
 %%% Circle Variables
 r=40;

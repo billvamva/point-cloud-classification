@@ -5,3 +5,7 @@ Princeton/
 *.off
 *.stl
 surf_test/
+*_datasets/
+*.dt2
+*.icloud
+*.skp

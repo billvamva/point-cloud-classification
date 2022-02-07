@@ -6,8 +6,8 @@ mess = 'Starting simulation'
 
 
 %Saving file and data json
-file_template = 'testing/sphere_%d.pcd';
-json_name = 'Sphere_dataset/simulation_data.json';
+file_template = 'Cylinder_dataset/cylinder_%d.pcd';
+json_name = 'Cylinder_dataset/simulation_data.json';
 
 
 %Generate color identities for plotting
@@ -24,7 +24,7 @@ y_mount_angle = 25;
 addMesh(scene,"surface",{X,Y,Z},color.Gray)
 
 % Load, scale, and position custom stl model.
-[f,v,n] = stlread('Models/Cube.stl');
+[f,v,n] = stlread('Models/Cylinder.stl');
 scale = 1;
 translation = [0 0 0];
 translated_target = (f.Points*scale)+ translation;

@@ -9,7 +9,7 @@ from skimage.filters import hessian
 
 class range_image():
     
-    def __init__(self, filename, vox = 0.01, path = ""):
+    def __init__(self, filename, obj_class, vox = 0.01, path = ""):
         """
         Range Image Construction Class
 
@@ -21,6 +21,7 @@ class range_image():
         """
 
         self.filename = filename
+        self.obj_class = obj_class
         self.pcd = self.open_pcd(filename, path)
         self.vox = vox
         self.incline = 0
@@ -41,7 +42,9 @@ class range_image():
         self.save_image()
 
     def open_pcd(self, filename, path = ""):
-        
+
+        print(path+filename)
+
         pcd = o3d.io.read_point_cloud(path + filename)
 
         return pcd
@@ -343,22 +346,37 @@ class range_image():
         fig.add_axes(ax)    
         ax.imshow(self.cropped_image, aspect='auto')
             
-        fig.savefig(f"{path}{self.filename.split('.')[0]}.png")
+        fig.savefig(f"{path}{self.obj_class}_{self.filename.split('.')[0]}.png")
         plt.close(fig)
 
 if __name__ == "__main__":
     
     directory_str = "./point_clouds/"
     
-    # filename = "block_1.pcd"
-    
-    # range_im = range_image(filename, path = directory_str)
-
     directory = os.fsencode(directory_str)
 
-    for file in os.listdir(directory):
-        
-        filename = os.fsdecode(file)
+    for folder in os.listdir(directory)[::-1]:
 
-        range_im = range_image(filename, path = directory_str)
+        folder_str = os.fsdecode(folder)
+
+        if folder_str == ".DS_Store":
+            
+            continue
+        
+        folder_str = folder_str + "/" 
+
+        obj_class = folder_str.split('_')[0]
+        
+        print(obj_class)
+        
+        for file in os.listdir(os.path.join(directory,folder)): 
+            
+            filename = os.fsdecode(file)
+
+            print(filename.split(".")[-1])
+
+            if filename.split('.')[-1] == "pcd":
+                
+                range_im = range_image(filename, obj_class = obj_class, path = directory_str + folder_str)
+            
     

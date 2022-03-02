@@ -17,12 +17,13 @@ from feature_extraction import Feature_Extractor
 
 class Classifier():
     
-    def __init__(self, features, labels, param_grid, n_components = 500):
+    def __init__(self, features, labels, param_grid, orb_des, n_components = 500):
         
         self.features = features
         self.labels = labels
         self.n_components = n_components
         self.param_grid = param_grid
+        self.orb_des = orb_des
         self.scaled_features = self.preprocess_data(self.features, self.n_components)
         self.X_train, self.X_test, self.y_train, self.y_test = self.split_data(self.scaled_features, self.labels)
         self.svm_model = self.model_fit(self.param_grid, self.X_train, self.y_train)
@@ -127,4 +128,4 @@ if __name__ == "__main__":
 
     features, labels = feature_extractor.features, feature_extractor.labels
 
-    classifier = Classifier(features, labels, param_grid)
+    classifier = Classifier(features, labels, param_grid, feature_extractor.orb_des)

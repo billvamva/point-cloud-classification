@@ -133,7 +133,7 @@ class Feature_Extractor():
 
         path = "./range_images/"
 
-        feature_size = np.hstack((self.get_glcm_features(self.get_image(path + "block_1.png")), self.get_hog_features(self.get_image(path + "block_1.png")))).shape[0]
+        feature_size = np.hstack((self.get_glcm_features(self.get_image(path + "car_25_-0.png")), self.get_hog_features(self.get_image(path + "car_25_-0.png")))).shape[0]
 
         print(feature_size)
 
@@ -175,26 +175,6 @@ class Feature_Extractor():
         np.savetxt('./orb_desc/' + self.filename.split(".")[0], des, fmt='%d')
         return kp, des
     
-
-if __name__ == "__main__":
-
-    path = "./range_images/"
-    test_path = "./test_range_images/"
-    
-    
-    # for file in os.listdir(path):
-
-    #     filename = os.fsdecode(file)
-        
-    #     if filename != ".DS_Store": 
-            
-    #         feature_extractor = Feature_Extractor(path, filename, hog_glcm= False)
-    
-    filename = "block_1.png" 
-   
-    feature_extractor = Feature_Extractor(test_path, filename, orb = False)
-
-    # feature_extractor.plot_matches()
 
 
 

@@ -27,6 +27,10 @@ class ri_Dataset(Dataset):
         num = 0
 
         for filename in os.listdir("../range_images/"): 
+            name = os.fsdecode(filename) 
+
+            if name == ".DS_Store":
+                continue
             mapping[filename[:-4]] = str(num)
             num += 1
         
@@ -42,6 +46,11 @@ class ri_Dataset(Dataset):
         self.add_class("dataset", 5, "sphere")
         
         for filename in os.listdir(image_dir): 
+            
+            name = os.fsdecode(filename) 
+
+            if name == ".DS_Store":
+                continue
 
             image_id = self.mapping[filename[:-4]] 
 

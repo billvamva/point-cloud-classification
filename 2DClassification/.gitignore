@@ -8,6 +8,7 @@ bin-release/
 .settings/
 /contours
 /b_range_images
+/Mask_RCNN-TF2/mask_rcnn_coco.h5
 /models/*
 /point_clouds
 .DS_Store

@@ -18,7 +18,7 @@ def get_performance_value(model, x_value):
     
     proba = model.predict_proba(x_value.reshape(1, -1))
 
-    return (int(y_value), float(max(proba[0])))
+    return (int(y_value), int(max(proba[0])))
 
 
 x_value = fe.get_features(ri.output_path)

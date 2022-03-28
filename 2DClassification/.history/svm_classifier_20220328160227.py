@@ -130,7 +130,7 @@ if __name__ == "__main__":
     
     param_grid={'C':[0.1,1],'gamma':[0.0001,0.001,0.1],'kernel':['rbf','poly']}
 
-    feature_extractor = Feature_Extractor(data_path = path, hog_glcm = True, orb = False) 
+    feature_extractor = Feature_Extractor(data_path = path, orb = False) 
 
     features, labels = feature_extractor.features, feature_extractor.labels
 

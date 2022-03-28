@@ -301,7 +301,7 @@ class range_image():
         
         else:
 
-            output_path = dst_path + time.strftime("%Y%m%d-%H%M%S") + ".png"
+            output_path = "dst_path" + time.strftime("%Y%m%d-%H%M%S") + ".png"
             
         fig = plt.figure(frameon=False)
         ax = plt.Axes(fig, [0., 0., 1., 1.])

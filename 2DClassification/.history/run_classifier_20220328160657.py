@@ -14,14 +14,14 @@ print("feature extractor created...")
  
 def get_performance_value(model, x_value):
     
-    y_value = model.predict(x_value.reshape(1, -1))
+    y_value = model.predict(x_value)
     
-    proba = model.predict_proba(x_value.reshape(1, -1))
+    proba = model.predict_proba(x_value)
 
-    return (int(y_value), float(max(proba[0])))
+    return (int(y_value), int(max(proba[0])))
 
 
 x_value = fe.get_features(ri.output_path)
 print("features extracted...")
-_class, proba = get_performance_value(clf.svm_model, x_value)
+_class, proba = get_performance_value(svm_model, x_value)
 print(_class, proba)

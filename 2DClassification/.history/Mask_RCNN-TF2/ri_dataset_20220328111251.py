@@ -206,7 +206,7 @@ test_set.prepare()
 print('Test: %d' % len(test_set.image_ids))
 
 
-# config = ri_config()
+config = ri_config()
 # config.display()
 
 # model = MaskRCNN(mode='training', model_dir='./', config=config)

@@ -206,7 +206,7 @@ test_set.prepare()
 print('Test: %d' % len(test_set.image_ids))
 
 
-# config = ri_config()
+config = ri_config()
 # config.display()
 
 # model = MaskRCNN(mode='training', model_dir='./', config=config)
@@ -219,7 +219,7 @@ cfg = PredictionConfig()
 # define the model
 model = MaskRCNN(mode='inference', model_dir='./', config=cfg)
 # load model weights
-model.load_weights('mask_rcnn_ri_cfg_0005.h5', by_name=True)
+model.load_weights('mask_rcnn_kangaroo_cfg_0005.h5', by_name=True)
 # evaluate model on training dataset
 train_mAP = evaluate_model(train_set, model, cfg)
 print("Train mAP: %.3f" % train_mAP)

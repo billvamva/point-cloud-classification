@@ -162,13 +162,13 @@ class ri_config(Config):
 
 # define the prediction configuration
 class PredictionConfig(Config):
-# define the name of the configuration
-    NAME = "ri_test_cfg"
+	# define the name of the configuration
+	NAME = "ri_test_cfg"
+	NUM_CLASSES = 6
+	# simplify GPU config
     USE_MINI_MASK = False
-    NUM_CLASSES = 6
-    # simplify GPU config
-    GPU_COUNT = 1
-    IMAGES_PER_GPU = 1
+	GPU_COUNT = 1
+	IMAGES_PER_GPU = 1
 
 # calculate the mAP for a model on a given dataset
 def evaluate_model(dataset, model, cfg):

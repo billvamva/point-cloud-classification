@@ -3,7 +3,8 @@ import os
 from re import M
 from xml.etree import ElementTree
 import numpy as np
-from matplotlib import pyplot as plt
+from matplotlib import pyplot
+from matplotlib.patches import Rectangle
 
 from mrcnn.utils import Dataset
 from mrcnn.config import Config
@@ -42,11 +43,11 @@ class ri_Dataset(Dataset):
     
     def load_dataset(self, image_dir, annot_dir, train = True):
 
-        self.add_class("dataset", 1, "cube")
-        self.add_class("dataset", 2, "cylinder")
-        self.add_class("dataset", 3, "car_0027")
-        self.add_class("dataset", 4, "car_0198")
-        self.add_class("dataset", 5, "sphere")
+        self.add_class("dataset", 1, "object")
+        # self.add_class("dataset", 2, "cylinder")
+        # self.add_class("dataset", 3, "car_0027")
+        # self.add_class("dataset", 4, "car_0198")
+        # self.add_class("dataset", 5, "sphere")
         
         for filename in os.listdir(image_dir): 
             
@@ -129,11 +130,9 @@ class ri_Dataset(Dataset):
 
         col_s, col_e = coors[0], coors[1]
 
-        mask[row_s:row_e, col_s:col_e, :] = 1
+        mask[row_s:row_e, col_s:col_e, 0] = 1
 
-        class_id = self.class_names.index(obj)
-
-        return mask, np.array([class_id]) 
+        return mask.astype(np.bool), np.array([mask.shape[-1]], dtype=np.int32) 
     
     # load an image reference
     def image_reference(self, image_id):
@@ -154,9 +153,9 @@ class ri_config(Config):
     
     NAME = "ri_cfg"
 
-    NUM_CLASSES = 6
+    NUM_CLASSES = 2
 
-    BATCH_SIZE = 16
+    BATCH_SIZE = 8
 
     STEPS_PER_EPOCH = 816
 
@@ -165,7 +164,7 @@ class PredictionConfig(Config):
 # define the name of the configuration
     NAME = "ri_test_cfg"
     USE_MINI_MASK = False
-    NUM_CLASSES = 6
+    NUM_CLASSES = 2
     # simplify GPU config
     GPU_COUNT = 1
     IMAGES_PER_GPU = 1
@@ -192,6 +191,62 @@ def evaluate_model(dataset, model, cfg):
 	mAP = np.mean(APs)
 	return mAP
 
+# plot a number of photos with ground truth and predictions
+def plot_actual_vs_predicted(dataset, model, cfg, n_images=3):
+    # load image and mask
+    for i in range(n_images):
+        # load the image and mask
+        image = dataset.load_image(i)
+        mask, _ = dataset.load_mask(i)
+        # convert pixel values (e.g. center)
+        scaled_image = mold_image(image, cfg)
+        # convert image into one sample
+        sample = np.expand_dims(scaled_image, 0)
+        # make prediction
+        yhat = model.detect(sample, verbose=0)[0]
+        print(yhat)
+        # define subplot
+        pyplot.subplot(n_images, 2, i*2+1)
+        # plot raw pixel data
+        pyplot.imshow(image)
+        pyplot.title('Actual')
+        # plot masks
+        for j in range(mask.shape[2]):
+            pyplot.imshow(mask[:, :, j], cmap='gray', alpha=0.3)
+        # get the context for drawing boxes
+        pyplot.subplot(n_images, 2, i*2+2)
+        # plot raw pixel data
+        pyplot.imshow(image)
+        pyplot.title('Predicted')
+        ax = pyplot.gca()
+        # plot each box
+        for box in yhat['rois']:
+            # get coordinates
+            y1, x1, y2, x2 = box
+            # calculate width and height of the box
+            width, height = x2 - x1, y2 - y1
+            # create the shape
+            rect = Rectangle((x1, y1), width, height, fill=False, color='red')
+            # draw the box
+            ax.add_patch(rect)
+            # show the figure
+    #pyplot.show()
+
+def test_mask_load(train_set):
+    
+    for i in range(9):
+    	# define subplot
+        pyplot.subplot(330 + 1 + i)
+        # plot raw pixel data
+        image = train_set.load_image(i)
+        pyplot.imshow(image)
+        # plot all masks
+        mask, _ = train_set.load_mask(i)
+        for j in range(mask.shape[2]):
+            pyplot.imshow(mask[:, :, j], cmap='gray', alpha=0.3)
+        # show the figure
+    pyplot.show()
+
 mapping = ri_Dataset.map_ids()
 
 train_set = ri_Dataset(mapping)
@@ -200,33 +255,41 @@ train_set.prepare()
 print('Train: %d' % len(train_set.image_ids))
 
 
-
 test_set = ri_Dataset(mapping)
 test_set.load_dataset("../range_images/", "../range_images_anot/", train = False)
 test_set.prepare()
 print('Test: %d' % len(test_set.image_ids))
 
 
-# config = ri_config()
-# config.display()
+######################################################################################
+config = ri_config()
+config.display()
+model = MaskRCNN(mode='training', model_dir='./', config=config)
+model.load_weights('mask_rcnn_coco.h5', by_name=True, exclude=["mrcnn_class_logits", "mrcnn_bbox_fc",  "mrcnn_bbox", "mrcnn_mask"])
+model.train(train_set, test_set, learning_rate=config.LEARNING_RATE, epochs=5, layers='heads')
+######################################################################################
 
-# model = MaskRCNN(mode='training', model_dir='./', config=config)
+######################################################################################
+# cfg = PredictionConfig()
+# # define the model
+# model = MaskRCNN(mode='inference', model_dir='./', config=cfg)
+# # load model weights
+# model.load_weights('mask_rcnn_ri_cfg_0005.h5', by_name=True)
+# # evaluate model on training dataset
+# train_mAP = evaluate_model(train_set, model, cfg)
+# print("Train mAP: %.3f" % train_mAP)
+# # evaluate model on test dataset
+# test_mAP = evaluate_model(test_set, model, cfg)
+# print("Test mAP: %.3f" % test_mAP)
+######################################################################################
 
-# model.load_weights('mask_rcnn_coco.h5', by_name=True, exclude=["mrcnn_class_logits", "mrcnn_bbox_fc",  "mrcnn_bbox", "mrcnn_mask"])
+######################################################################################
+# # plot predictions for train dataset
+# plot_actual_vs_predicted(train_set, model, cfg)
+# # plot predictions for test dataset
+# plot_actual_vs_predicted(test_set, model, cfg)
+######################################################################################
 
-# model.train(train_set, test_set, learning_rate=config.LEARNING_RATE, epochs=5, layers='heads')
-
-cfg = PredictionConfig()
-# define the model
-model = MaskRCNN(mode='inference', model_dir='./', config=cfg)
-# load model weights
-model.load_weights('mask_rcnn_ri_cfg_0005.h5', by_name=True)
-# evaluate model on training dataset
-train_mAP = evaluate_model(train_set, model, cfg)
-print("Train mAP: %.3f" % train_mAP)
-# evaluate model on test dataset
-test_mAP = evaluate_model(test_set, model, cfg)
-print("Test mAP: %.3f" % test_mAP)
 
 def change_xml_files():
     

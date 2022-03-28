@@ -220,6 +220,7 @@ def plot_actual_vs_predicted(dataset, model, cfg, n_images=7):
         ax = pyplot.gca()
         # plot each box
         for box in yhat['rois']:
+            print(box)
             # get coordinates
             y1, x1, y2, x2 = box
             # calculate width and height of the box
@@ -229,7 +230,7 @@ def plot_actual_vs_predicted(dataset, model, cfg, n_images=7):
             # draw the box
             ax.add_patch(rect)
             # show the figure
-    pyplot.show()
+    #pyplot.show()
 
 def test_mask_load(train_set):
 
@@ -277,19 +278,19 @@ model.load_weights('mask_rcnn_ri_cfg_0005.h5', by_name=True)
 ######################################################################################
 
 ######################################################################################
-# evaluate model on training dataset
-train_mAP = evaluate_model(train_set, model, cfg)
-print("Train mAP: %.3f" % train_mAP)
-# evaluate model on test dataset
-test_mAP = evaluate_model(test_set, model, cfg)
-print("Test mAP: %.3f" % test_mAP)
+# # evaluate model on training dataset
+# train_mAP = evaluate_model(train_set, model, cfg)
+# print("Train mAP: %.3f" % train_mAP)
+# # evaluate model on test dataset
+# test_mAP = evaluate_model(test_set, model, cfg)
+# print("Test mAP: %.3f" % test_mAP)
 ######################################################################################
 
 ######################################################################################
-# # plot predictions for train dataset
-# plot_actual_vs_predicted(train_set, model, cfg)
-# # plot predictions for test dataset
-# plot_actual_vs_predicted(test_set, model, cfg)
+# plot predictions for train dataset
+plot_actual_vs_predicted(train_set, model, cfg)
+# plot predictions for test dataset
+plot_actual_vs_predicted(test_set, model, cfg)
 ######################################################################################
 
 

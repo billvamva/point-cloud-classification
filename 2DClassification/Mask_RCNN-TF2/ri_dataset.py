@@ -204,6 +204,7 @@ def plot_actual_vs_predicted(dataset, model, cfg, n_images=7):
         sample = np.expand_dims(scaled_image, 0)
         # make prediction
         yhat = model.detect(sample, verbose=0)[0]
+        print(yhat['rois'])
         # define subplot
         pyplot.subplot(n_images, 2, i*2+1)
         # plot raw pixel data
@@ -220,7 +221,6 @@ def plot_actual_vs_predicted(dataset, model, cfg, n_images=7):
         ax = pyplot.gca()
         # plot each box
         for box in yhat['rois']:
-            print(box)
             # get coordinates
             y1, x1, y2, x2 = box
             # calculate width and height of the box

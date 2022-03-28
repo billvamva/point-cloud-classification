@@ -19,28 +19,28 @@ from mrcnn.model import mold_image
 class ri_Dataset(Dataset):
 
     def __init__(self, mapping):
-        
+
         self.mapping = mapping
         super().__init__()
 
     @classmethod
     def map_ids(self):
-        
+
         mapping = {}
 
         num = 0
 
-        for filename in os.listdir("../range_images/"): 
-            name = os.fsdecode(filename) 
+        for filename in os.listdir("../range_images/"):
+            name = os.fsdecode(filename)
 
             if name == ".DS_Store":
                 continue
             mapping[filename[:-4]] = str(num)
             num += 1
-        
+
         return mapping
-                
-    
+
+
     def load_dataset(self, image_dir, annot_dir, train = True):
 
         self.add_class("dataset", 1, "object")
@@ -48,50 +48,50 @@ class ri_Dataset(Dataset):
         # self.add_class("dataset", 3, "car_0027")
         # self.add_class("dataset", 4, "car_0198")
         # self.add_class("dataset", 5, "sphere")
-        
-        for filename in os.listdir(image_dir): 
-            
-            name = os.fsdecode(filename) 
+
+        for filename in os.listdir(image_dir):
+
+            name = os.fsdecode(filename)
 
             if name == ".DS_Store":
                 continue
 
-            image_id = self.mapping[filename[:-4]] 
+            image_id = self.mapping[filename[:-4]]
 
             if int(image_id) in []:
-                
+
                 continue
 
             if train and int(image_id) % 4 == 0:
-                
+
                 continue
-                
+
             if not train and int(image_id) % 4 != 0:
-                
+
                 continue
-            
+
             img_path = image_dir + filename
 
             annot_path = annot_dir + filename[:-4] + ".xml"
 
             self.add_image("dataset", image_id = image_id, path = img_path, annotation = annot_path)
 
-        
-    
+
+
     def find_box(self, filename):
-        
+
         tree = ElementTree.parse(filename)
 
         root = tree.getroot()
 
         box = root.findall(".//bndbox")[0]
-        
+
         xmin, xmax, ymin, ymax = int(box.find("xmin").text), int(box.find("xmax").text), int(box.find("ymin").text), int(box.find("ymax").text)
 
         coors = [xmin, xmax, ymin, ymax]
-        
+
         width = int(root.find('.//size/width').text)
-        
+
         height = int(root.find('.//size/height').text)
 
         return coors, width, height
@@ -101,19 +101,19 @@ class ri_Dataset(Dataset):
         img_str = ""
 
         for im_str, im_id in self.mapping.items():
-            
+
            if int(image_id) == int(im_id):
-               
+
                img_str = im_str
-               
-               break 
-        
-        if img_str.split("_")[0] != "car":    
-            
+
+               break
+
+        if img_str.split("_")[0] != "car":
+
             obj = img_str.split("_")[0]
-        
+
         else:
-            
+
             obj = ("_").join(img_str.split("_")[:2])
 
         key = self.mapping[img_str]
@@ -132,14 +132,14 @@ class ri_Dataset(Dataset):
 
         mask[row_s:row_e, col_s:col_e, 0] = 1
 
-        return mask.astype(np.bool), np.array([mask.shape[-1]], dtype=np.int32) 
-    
+        return mask.astype(np.bool), np.array([mask.shape[-1]], dtype=np.int32)
+
     # load an image reference
     def image_reference(self, image_id):
-        
+
         info = self.image_info[str(image_id)]
         return info['path']
-    
+
     def enumerate_ims(self):
         # enumerate all images in the dataset
         for image_id in self.image_ids:
@@ -147,10 +147,10 @@ class ri_Dataset(Dataset):
             info = self.image_info[image_id]
             # display on the console
             print(info)
-        
+
 
 class ri_config(Config):
-    
+
     NAME = "ri_cfg"
 
     NUM_CLASSES = 2
@@ -192,7 +192,7 @@ def evaluate_model(dataset, model, cfg):
 	return mAP
 
 # plot a number of photos with ground truth and predictions
-def plot_actual_vs_predicted(dataset, model, cfg, n_images=3):
+def plot_actual_vs_predicted(dataset, model, cfg, n_images=7):
     # load image and mask
     for i in range(n_images):
         # load the image and mask
@@ -204,7 +204,6 @@ def plot_actual_vs_predicted(dataset, model, cfg, n_images=3):
         sample = np.expand_dims(scaled_image, 0)
         # make prediction
         yhat = model.detect(sample, verbose=0)[0]
-        print(yhat)
         # define subplot
         pyplot.subplot(n_images, 2, i*2+1)
         # plot raw pixel data
@@ -230,10 +229,10 @@ def plot_actual_vs_predicted(dataset, model, cfg, n_images=3):
             # draw the box
             ax.add_patch(rect)
             # show the figure
-    #pyplot.show()
+    pyplot.show()
 
 def test_mask_load(train_set):
-    
+
     for i in range(9):
     	# define subplot
         pyplot.subplot(330 + 1 + i)
@@ -262,25 +261,28 @@ print('Test: %d' % len(test_set.image_ids))
 
 
 ######################################################################################
-config = ri_config()
-config.display()
-model = MaskRCNN(mode='training', model_dir='./', config=config)
-model.load_weights('mask_rcnn_coco.h5', by_name=True, exclude=["mrcnn_class_logits", "mrcnn_bbox_fc",  "mrcnn_bbox", "mrcnn_mask"])
-model.train(train_set, test_set, learning_rate=config.LEARNING_RATE, epochs=5, layers='heads')
+# config = ri_config()
+# config.display()
+# model = MaskRCNN(mode='training', model_dir='./', config=config)
+# model.load_weights('mask_rcnn_coco.h5', by_name=True, exclude=["mrcnn_class_logits", "mrcnn_bbox_fc",  "mrcnn_bbox", "mrcnn_mask"])
+# model.train(train_set, test_set, learning_rate=config.LEARNING_RATE, epochs=5, layers='heads')
 ######################################################################################
 
 ######################################################################################
-# cfg = PredictionConfig()
-# # define the model
-# model = MaskRCNN(mode='inference', model_dir='./', config=cfg)
-# # load model weights
-# model.load_weights('mask_rcnn_ri_cfg_0005.h5', by_name=True)
-# # evaluate model on training dataset
-# train_mAP = evaluate_model(train_set, model, cfg)
-# print("Train mAP: %.3f" % train_mAP)
-# # evaluate model on test dataset
-# test_mAP = evaluate_model(test_set, model, cfg)
-# print("Test mAP: %.3f" % test_mAP)
+cfg = PredictionConfig()
+# define the model
+model = MaskRCNN(mode='inference', model_dir='./', config=cfg)
+# load model weights
+model.load_weights('mask_rcnn_ri_cfg_0005.h5', by_name=True)
+######################################################################################
+
+######################################################################################
+# evaluate model on training dataset
+train_mAP = evaluate_model(train_set, model, cfg)
+print("Train mAP: %.3f" % train_mAP)
+# evaluate model on test dataset
+test_mAP = evaluate_model(test_set, model, cfg)
+print("Test mAP: %.3f" % test_mAP)
 ######################################################################################
 
 ######################################################################################
@@ -292,21 +294,21 @@ model.train(train_set, test_set, learning_rate=config.LEARNING_RATE, epochs=5, l
 
 
 def change_xml_files():
-    
+
     path = '../range_images_anot/'
     base_dst_path = "/Users/vasilieiosvamvakas/Documents/Project/2DClassification/range_images/"
 
     for file in os.listdir(path):
 
-        filename = os.fsdecode(file) 
+        filename = os.fsdecode(file)
 
         if filename == ".DS_Store":
             continue
 
-        dst_path = base_dst_path + filename 
+        dst_path = base_dst_path + filename
         mytree = ElementTree.parse(path + filename)
         myroot = mytree.getroot()
         myroot[0].text = "range_images"
-        myroot[2].text = dst_path  
+        myroot[2].text = dst_path
 
         mytree.write(path + filename)

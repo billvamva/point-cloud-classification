@@ -268,19 +268,19 @@ print('Test: %d' % len(test_set.image_ids))
 
 
 ######################################################################################
-# config = ri_config()
-# config.display()
-# model = MaskRCNN(mode='training', model_dir='./', config=config)
-# model.load_weights('mask_rcnn_coco.h5', by_name=True, exclude=["mrcnn_class_logits", "mrcnn_bbox_fc",  "mrcnn_bbox", "mrcnn_mask"])
-# model.train(train_set, test_set, learning_rate=config.LEARNING_RATE, epochs=5, layers='heads')
+config = ri_config()
+config.display()
+model = MaskRCNN(mode='training', model_dir='./', config=config)
+model.load_weights('mask_rcnn_coco.h5', by_name=True, exclude=["mrcnn_class_logits", "mrcnn_bbox_fc",  "mrcnn_bbox", "mrcnn_mask"])
+model.train(train_set, test_set, learning_rate=config.LEARNING_RATE, epochs=5, layers='heads')
 ######################################################################################
 
 ######################################################################################
-cfg = PredictionConfig()
-# define the model
-model = MaskRCNN(mode='inference', model_dir='./', config=cfg)
-# load model weights
-model.load_weights('mask_rcnn_ri_cfg_0005.h5', by_name=True)
+# cfg = PredictionConfig()
+# # define the model
+# model = MaskRCNN(mode='inference', model_dir='./', config=cfg)
+# # load model weights
+# model.load_weights('mask_rcnn_ri_cfg_0005.h5', by_name=True)
 ######################################################################################
 
 ######################################################################################
@@ -293,10 +293,10 @@ model.load_weights('mask_rcnn_ri_cfg_0005.h5', by_name=True)
 ######################################################################################
 
 ######################################################################################
-# plot predictions for train dataset
-plot_actual_vs_predicted(train_set, model, cfg)
-# plot predictions for test dataset
-plot_actual_vs_predicted(test_set, model, cfg)
+# # plot predictions for train dataset
+# plot_actual_vs_predicted(train_set, model, cfg)
+# # plot predictions for test dataset
+# plot_actual_vs_predicted(test_set, model, cfg)
 ######################################################################################
 
 

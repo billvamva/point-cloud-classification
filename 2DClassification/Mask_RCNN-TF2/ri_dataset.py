@@ -13,7 +13,12 @@ from mrcnn.utils import compute_ap
 from mrcnn.model import load_image_gt
 from mrcnn.model import mold_image
 
-import imgaug.augmenters as iaa
+from tensorflow.keras.backend import manual_variable_initialization 
+import tensorflow.compat.v1 as tf
+
+manual_variable_initialization(True)
+
+
 
 class ri_Dataset(Dataset):
 
@@ -143,10 +148,6 @@ class ri_config(Config):
     BATCH_SIZE = 2
     IMAGE_MIN_DIM = 480
     IMAGE_MAX_DIM = 640
-    # Use smaller anchors because our image and objects are small
-    # RPN Acnhor scales and ratios to find ROI
-    RPN_ANCHOR_SCALES = (16, 32, 48, 64, 128)
-    RPN_ANCHOR_RATIOS = [0.5, 1, 1.5]
     TRAIN_ROIS_PER_IMAGE = 20
     DETECTION_MIN_CONFIDENCE = 0.5
     STEPS_PER_EPOCH = 850
@@ -156,8 +157,7 @@ class PredictionConfig(Config):
 # define the name of the configuration
     NAME = "ri_test_cfg"
     USE_MINI_MASK = False
-    NUM_CLASSES = 2
-    # simplify GPU config
+    NUM_CLASSES = 1 + 1
     GPU_COUNT = 1
     IMAGES_PER_GPU = 1
 
@@ -266,7 +266,8 @@ model.train(train_set, test_set, learning_rate=config.LEARNING_RATE, epochs = 15
 # # define the model
 # model = MaskRCNN(mode='inference', model_dir='./', config=cfg)
 # # load model weights
-# model.load_weights('mask_rcnn_ri_cfg_0005.h5', by_name=True)
+# model.load_weights('mask_rcnn_ri_cfg_0015.h5', by_name=True)
+# tf.keras.Model.load_weights(model.keras_model, 'mask_rcnn_ri_cfg_0015.h5', by_name=True)
 ######################################################################################
 
 ######################################################################################

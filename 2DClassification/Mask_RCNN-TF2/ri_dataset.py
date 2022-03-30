@@ -13,12 +13,7 @@ from mrcnn.utils import compute_ap
 from mrcnn.model import load_image_gt
 from mrcnn.model import mold_image
 
-from tensorflow.keras.backend import manual_variable_initialization 
-import tensorflow.compat.v1 as tf
-
-manual_variable_initialization(True)
-
-
+import imgaug
 
 class ri_Dataset(Dataset):
 
@@ -258,7 +253,16 @@ config = ri_config()
 config.display()
 model = MaskRCNN(mode='training', model_dir='./', config=config)
 # model.load_weights('mask_rcnn_coco.h5', by_name=True, exclude=["mrcnn_class_logits", "mrcnn_bbox_fc",  "mrcnn_bbox", "mrcnn_mask"])
-model.train(train_set, test_set, learning_rate=config.LEARNING_RATE, epochs = 15, layers='all')
+model.train(train_set, test_set, learning_rate=config.LEARNING_RATE, epochs = 15, layers='all', augmentation = imgaug.Sometimes(5/6,aug.OneOf(
+                                            [
+                                            imgaug.augmenters.Fliplr(1), 
+                                            imgaug.augmenters.Flipud(1), 
+                                            imgaug.augmenters.Affine(rotate=(-45, 45)), 
+                                            imgaug.augmenters.Affine(rotate=(-90, 90)), 
+                                            imgaug.augmenters.Affine(scale=(0.5, 1.5))
+                                             ]
+                                        )
+                                   ))
 ######################################################################################
 
 ######################################################################################

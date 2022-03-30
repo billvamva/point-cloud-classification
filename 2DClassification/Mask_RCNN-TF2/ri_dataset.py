@@ -269,7 +269,6 @@ model.train(train_set, test_set, learning_rate=config.LEARNING_RATE, epochs = 15
             iaa.Flipud(1),
             iaa.Affine(rotate=(-45, 45)),
             iaa.Affine(rotate=(-90, 90)),
-            iaa.Affine(scale=(0.5, 1.5))
             ])))
 ######################################################################################
 

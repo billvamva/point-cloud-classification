@@ -33,6 +33,7 @@ class SVM_Classifier():
             self.save_model(self.svm_model)
             self.evaluate_model(self.svm_model, self.X_test, self.y_test)
         
+        # self.matches = self.match_orb_features(self.orb_des)
         
     
     
@@ -107,14 +108,8 @@ class SVM_Classifier():
             filename = os.fsdecode(file)
 
             if filename != ".DS_Store":
-
-                print(filename)
                 
                 des2 = np.loadtxt(directory_str + filename, dtype=np.uint8)
-                
-                if len(des2.shape) == 1:
-                    continue
-                
                 matches = bf.match(des1, des2)
 
                 matches = sorted(matches, key = lambda x:x.distance)

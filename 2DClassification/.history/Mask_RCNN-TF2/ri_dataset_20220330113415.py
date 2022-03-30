@@ -122,7 +122,7 @@ class ri_Dataset(Dataset):
             box = boxes[i]
             row_s, row_e = box[1], box[3]
             col_s, col_e = box[0], box[2]
-            mask[row_s:row_e, col_s:col_e, :] = 1
+            mask[row_s:row_e, col_s:col_e, i] = 1
 
         return mask.astype(np.bool), np.ones([mask.shape[-1]], dtype=np.int32)
 

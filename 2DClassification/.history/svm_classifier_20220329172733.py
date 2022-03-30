@@ -15,14 +15,14 @@ from feature_extraction import Feature_Extractor
 
 class SVM_Classifier():
     
-    def __init__(self, features = np.array([]), labels = [], param_grid = {},  orb_des = None, model_path = None, n_components = 500, orb = False):
+    def __init__(self, features = np.array([]), labels = [], param_grid = {},  orb_des = None, model_path = None, n_components = 500):
         
         self.model_path = model_path
 
         if self.model_path:
             self.svm_model = self.load_model(self.model_path)
         
-        elif not orb:
+        else:
             self.features = features
             self.labels = labels
             self.n_components = n_components
@@ -33,6 +33,7 @@ class SVM_Classifier():
             self.save_model(self.svm_model)
             self.evaluate_model(self.svm_model, self.X_test, self.y_test)
         
+        # self.matches = self.match_orb_features(self.orb_des)
         
     
     
@@ -107,21 +108,15 @@ class SVM_Classifier():
             filename = os.fsdecode(file)
 
             if filename != ".DS_Store":
-
-                print(filename)
                 
                 des2 = np.loadtxt(directory_str + filename, dtype=np.uint8)
-                
-                if len(des2.shape) == 1:
-                    continue
-                
                 matches = bf.match(des1, des2)
 
                 matches = sorted(matches, key = lambda x:x.distance)
 
                 matches_num[filename] = len(matches) / len(des1)
             
-        return max(matches_num, key = matches_num.get), max(matches_num.values())
+        return max(matches_num, key = matches_num.get)
     
     def plot_matches(self):
         

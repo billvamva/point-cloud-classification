@@ -34,11 +34,7 @@ ri = range_image(filename=pcd_path)
 
 #####################################################################
 fe = Feature_Extractor()
-clf = SVM_Classifier(orb = True)
-_, orb_features = fe.get_orb_features(fe.get_cv_image(ri.output_path))
-print(orb_features.shape)
-_class, proba = clf.match_orb_features(orb_features) 
+orb_features = fe.get_orb_features(fe.get_cv_image(ri.output_path))
 
-print(_class, proba)
 
 #####################################################################

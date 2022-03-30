@@ -94,7 +94,7 @@ class ri_Dataset(Dataset):
 
         height = int(root.find('.//size/height').text)
 
-        return [coors], width, height
+        return coors, width, height
 
     def load_mask(self, image_id):
 
@@ -114,17 +114,17 @@ class ri_Dataset(Dataset):
 
         path = info["annotation"]
 
-        boxes, width, height = self.find_box(path)
+        coors, width, height = self.find_box(path)
 
         mask = np.zeros([height, width, 1], dtype = 'uint8')
-        
-        for i in range(len(boxes)):
-            box = boxes[i]
-            row_s, row_e = box[1], box[3]
-            col_s, col_e = box[0], box[2]
-            mask[row_s:row_e, col_s:col_e, :] = 1
 
-        return mask.astype(np.bool), np.ones([mask.shape[-1]], dtype=np.int32)
+        row_s, row_e = coors[2], coors[3]
+
+        col_s, col_e = coors[0], coors[1]
+
+        mask[row_s:row_e, col_s:col_e, 0] = 1
+
+        return mask.astype(np.bool), np.array([mask.shape[-1]], dtype=np.int32)
 
     # load an image reference
     def image_reference(self, image_id):
@@ -144,16 +144,11 @@ class ri_Dataset(Dataset):
 class ri_config(Config):
 
     NAME = "ri_cfg"
+
     NUM_CLASSES = 2
-    BATCH_SIZE = 2
-    IMAGE_MIN_DIM = 960
-    IMAGE_MAX_DIM = 1280
-    # Use smaller anchors because our image and objects are small
-    RPN_ANCHOR_SCALES = (8, 16, 32, 64, 128, 256, 512)  # anchor side in pixels
-    # Reduce training ROIs per image because the images are small and have
-    # few objects. Aim to allow ROI sampling to pick 33% positive ROIs.
-    TRAIN_ROIS_PER_IMAGE = 32
-    DETECTION_MIN_CONFIDENCE = 0.7
+
+    BATCH_SIZE = 8
+
     STEPS_PER_EPOCH = 816
 
 # define the prediction configuration
@@ -262,7 +257,7 @@ print('Test: %d' % len(test_set.image_ids))
 # config = ri_config()
 # config.display()
 # model = MaskRCNN(mode='training', model_dir='./', config=config)
-# # model.load_weights('mask_rcnn_coco.h5', by_name=True, exclude=["mrcnn_class_logits", "mrcnn_bbox_fc",  "mrcnn_bbox", "mrcnn_mask"])
+# model.load_weights('mask_rcnn_coco.h5', by_name=True, exclude=["mrcnn_class_logits", "mrcnn_bbox_fc",  "mrcnn_bbox", "mrcnn_mask"])
 # model.train(train_set, test_set, learning_rate=config.LEARNING_RATE, epochs=5, layers='heads')
 ######################################################################################
 

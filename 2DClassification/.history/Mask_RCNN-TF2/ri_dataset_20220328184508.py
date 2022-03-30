@@ -19,28 +19,28 @@ from mrcnn.model import mold_image
 class ri_Dataset(Dataset):
 
     def __init__(self, mapping):
-
+        
         self.mapping = mapping
         super().__init__()
 
     @classmethod
     def map_ids(self):
-
+        
         mapping = {}
 
         num = 0
 
-        for filename in os.listdir("../range_images/"):
-            name = os.fsdecode(filename)
+        for filename in os.listdir("../range_images/"): 
+            name = os.fsdecode(filename) 
 
             if name == ".DS_Store":
                 continue
             mapping[filename[:-4]] = str(num)
             num += 1
-
+        
         return mapping
-
-
+                
+    
     def load_dataset(self, image_dir, annot_dir, train = True):
 
         self.add_class("dataset", 1, "object")
@@ -48,65 +48,73 @@ class ri_Dataset(Dataset):
         # self.add_class("dataset", 3, "car_0027")
         # self.add_class("dataset", 4, "car_0198")
         # self.add_class("dataset", 5, "sphere")
-
-        for filename in os.listdir(image_dir):
-
-            name = os.fsdecode(filename)
+        
+        for filename in os.listdir(image_dir): 
+            
+            name = os.fsdecode(filename) 
 
             if name == ".DS_Store":
                 continue
 
-            image_id = self.mapping[filename[:-4]]
+            image_id = self.mapping[filename[:-4]] 
 
             if int(image_id) in []:
-
+                
                 continue
 
             if train and int(image_id) % 4 == 0:
-
+                
                 continue
-
+                
             if not train and int(image_id) % 4 != 0:
-
+                
                 continue
-
+            
             img_path = image_dir + filename
 
             annot_path = annot_dir + filename[:-4] + ".xml"
 
             self.add_image("dataset", image_id = image_id, path = img_path, annotation = annot_path)
 
-
-
+        
+    
     def find_box(self, filename):
-
+        
         tree = ElementTree.parse(filename)
 
         root = tree.getroot()
 
         box = root.findall(".//bndbox")[0]
-
+        
         xmin, xmax, ymin, ymax = int(box.find("xmin").text), int(box.find("xmax").text), int(box.find("ymin").text), int(box.find("ymax").text)
 
-        coors = [xmin, ymin, xmax, ymax]
-
+        coors = [xmin, xmax, ymin, ymax]
+        
         width = int(root.find('.//size/width').text)
-
+        
         height = int(root.find('.//size/height').text)
 
-        return [coors], width, height
+        return coors, width, height
 
     def load_mask(self, image_id):
 
         img_str = ""
 
         for im_str, im_id in self.mapping.items():
-
+            
            if int(image_id) == int(im_id):
-
+               
                img_str = im_str
-
-               break
+               
+               break 
+        
+        if img_str.split("_")[0] != "car":    
+            
+            obj = img_str.split("_")[0]
+        
+        else:
+            
+            obj = ("_").join(img_str.split("_")[:2])
 
         key = self.mapping[img_str]
 
@@ -114,24 +122,24 @@ class ri_Dataset(Dataset):
 
         path = info["annotation"]
 
-        boxes, width, height = self.find_box(path)
+        coors, width, height = self.find_box(path)
 
         mask = np.zeros([height, width, 1], dtype = 'uint8')
-        
-        for i in range(len(boxes)):
-            box = boxes[i]
-            row_s, row_e = box[1], box[3]
-            col_s, col_e = box[0], box[2]
-            mask[row_s:row_e, col_s:col_e, :] = 1
 
-        return mask.astype(np.bool), np.ones([mask.shape[-1]], dtype=np.int32)
+        row_s, row_e = coors[2], coors[3]
 
+        col_s, col_e = coors[0], coors[1]
+
+        mask[row_s:row_e, col_s:col_e, 0] = 1
+
+        return mask.astype(np.bool), np.array([mask.shape[-1]], dtype=np.int32) 
+    
     # load an image reference
     def image_reference(self, image_id):
-
+        
         info = self.image_info[str(image_id)]
         return info['path']
-
+    
     def enumerate_ims(self):
         # enumerate all images in the dataset
         for image_id in self.image_ids:
@@ -139,21 +147,16 @@ class ri_Dataset(Dataset):
             info = self.image_info[image_id]
             # display on the console
             print(info)
-
+        
 
 class ri_config(Config):
-
+    
     NAME = "ri_cfg"
+
     NUM_CLASSES = 2
-    BATCH_SIZE = 2
-    IMAGE_MIN_DIM = 960
-    IMAGE_MAX_DIM = 1280
-    # Use smaller anchors because our image and objects are small
-    RPN_ANCHOR_SCALES = (8, 16, 32, 64, 128, 256, 512)  # anchor side in pixels
-    # Reduce training ROIs per image because the images are small and have
-    # few objects. Aim to allow ROI sampling to pick 33% positive ROIs.
-    TRAIN_ROIS_PER_IMAGE = 32
-    DETECTION_MIN_CONFIDENCE = 0.7
+
+    BATCH_SIZE = 8
+
     STEPS_PER_EPOCH = 816
 
 # define the prediction configuration
@@ -189,7 +192,7 @@ def evaluate_model(dataset, model, cfg):
 	return mAP
 
 # plot a number of photos with ground truth and predictions
-def plot_actual_vs_predicted(dataset, model, cfg, n_images=7):
+def plot_actual_vs_predicted(dataset, model, cfg, n_images=3):
     # load image and mask
     for i in range(n_images):
         # load the image and mask
@@ -201,7 +204,7 @@ def plot_actual_vs_predicted(dataset, model, cfg, n_images=7):
         sample = np.expand_dims(scaled_image, 0)
         # make prediction
         yhat = model.detect(sample, verbose=0)[0]
-        print(yhat['rois'])
+        print(yhat)
         # define subplot
         pyplot.subplot(n_images, 2, i*2+1)
         # plot raw pixel data
@@ -230,7 +233,7 @@ def plot_actual_vs_predicted(dataset, model, cfg, n_images=7):
     #pyplot.show()
 
 def test_mask_load(train_set):
-
+    
     for i in range(9):
     	# define subplot
         pyplot.subplot(330 + 1 + i)
@@ -262,7 +265,7 @@ print('Test: %d' % len(test_set.image_ids))
 # config = ri_config()
 # config.display()
 # model = MaskRCNN(mode='training', model_dir='./', config=config)
-# # model.load_weights('mask_rcnn_coco.h5', by_name=True, exclude=["mrcnn_class_logits", "mrcnn_bbox_fc",  "mrcnn_bbox", "mrcnn_mask"])
+# model.load_weights('mask_rcnn_coco.h5', by_name=True, exclude=["mrcnn_class_logits", "mrcnn_bbox_fc",  "mrcnn_bbox", "mrcnn_mask"])
 # model.train(train_set, test_set, learning_rate=config.LEARNING_RATE, epochs=5, layers='heads')
 ######################################################################################
 
@@ -292,21 +295,21 @@ plot_actual_vs_predicted(test_set, model, cfg)
 
 
 def change_xml_files():
-
+    
     path = '../range_images_anot/'
     base_dst_path = "/Users/vasilieiosvamvakas/Documents/Project/2DClassification/range_images/"
 
     for file in os.listdir(path):
 
-        filename = os.fsdecode(file)
+        filename = os.fsdecode(file) 
 
         if filename == ".DS_Store":
             continue
 
-        dst_path = base_dst_path + filename
+        dst_path = base_dst_path + filename 
         mytree = ElementTree.parse(path + filename)
         myroot = mytree.getroot()
         myroot[0].text = "range_images"
-        myroot[2].text = dst_path
+        myroot[2].text = dst_path  
 
         mytree.write(path + filename)

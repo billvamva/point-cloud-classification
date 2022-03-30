@@ -196,6 +196,7 @@ class Feature_Extractor():
         for file in os.listdir(path):
             
             filename = os.fsdecode(file)
+            print(filename)
 
             file_path = path + filename
 
@@ -208,9 +209,9 @@ class Feature_Extractor():
 
 
 
-# if __name__ == "__main__":
+if __name__ == "__main__":
     
-#     path = "./range_images/"
+    path = "./range_images/"
 
-#     feature_extractor = Feature_Extractor(data_path = path, hog_glcm = False, orb = True) 
+    feature_extractor = Feature_Extractor(data_path = path, hog_glcm = False, orb = True) 
 

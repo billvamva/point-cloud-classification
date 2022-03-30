@@ -196,6 +196,7 @@ class Feature_Extractor():
         for file in os.listdir(path):
             
             filename = os.fsdecode(file)
+            print(filename)
 
             file_path = path + filename
 
@@ -203,14 +204,14 @@ class Feature_Extractor():
 
                 _, des = self.get_orb_features(self.get_cv_image(file_path))
 
-                if type(des) != type(None):    
+                if des.size != 0:    
                     np.savetxt('./orb_desc/' + filename.split('.')[0], des, fmt='%d')
 
 
 
-# if __name__ == "__main__":
+if __name__ == "__main__":
     
-#     path = "./range_images/"
+    path = "./range_images/"
 
-#     feature_extractor = Feature_Extractor(data_path = path, hog_glcm = False, orb = True) 
+    feature_extractor = Feature_Extractor(data_path = path, hog_glcm = False, orb = True) 
 

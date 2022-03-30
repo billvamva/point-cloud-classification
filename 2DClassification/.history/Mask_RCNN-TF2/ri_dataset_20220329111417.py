@@ -122,7 +122,7 @@ class ri_Dataset(Dataset):
             box = boxes[i]
             row_s, row_e = box[1], box[3]
             col_s, col_e = box[0], box[2]
-            mask[row_s:row_e, col_s:col_e, :] = 1
+            mask[row_s:row_e, col_s:col_e, i] = 1
 
         return mask.astype(np.bool), np.ones([mask.shape[-1]], dtype=np.int32)
 
@@ -144,16 +144,25 @@ class ri_Dataset(Dataset):
 class ri_config(Config):
 
     NAME = "ri_cfg"
+
     NUM_CLASSES = 2
+
     BATCH_SIZE = 2
-    IMAGE_MIN_DIM = 960
-    IMAGE_MAX_DIM = 1280
+    
+    # Use small images for faster training. Set the limits of the small side
+    # the large side, and that determines the image shape.
+    IMAGE_MIN_DIM = 480
+    IMAGE_MAX_DIM = 640
+
     # Use smaller anchors because our image and objects are small
-    RPN_ANCHOR_SCALES = (8, 16, 32, 64, 128, 256, 512)  # anchor side in pixels
+    RPN_ANCHOR_SCALES = (8, 16, 32, 64, 128)  # anchor side in pixels
+
     # Reduce training ROIs per image because the images are small and have
     # few objects. Aim to allow ROI sampling to pick 33% positive ROIs.
     TRAIN_ROIS_PER_IMAGE = 32
-    DETECTION_MIN_CONFIDENCE = 0.7
+
+    DETECTION_MIN_CONFIDENCE = 0.5
+
     STEPS_PER_EPOCH = 816
 
 # define the prediction configuration
@@ -284,10 +293,10 @@ model.load_weights('mask_rcnn_ri_cfg_0005.h5', by_name=True)
 ######################################################################################
 
 ######################################################################################
-# plot predictions for train dataset
-plot_actual_vs_predicted(train_set, model, cfg)
-# plot predictions for test dataset
-plot_actual_vs_predicted(test_set, model, cfg)
+# # plot predictions for train dataset
+# plot_actual_vs_predicted(train_set, model, cfg)
+# # plot predictions for test dataset
+# plot_actual_vs_predicted(test_set, model, cfg)
 ######################################################################################
 
 

@@ -107,14 +107,8 @@ class SVM_Classifier():
             filename = os.fsdecode(file)
 
             if filename != ".DS_Store":
-
-                print(filename)
                 
                 des2 = np.loadtxt(directory_str + filename, dtype=np.uint8)
-                
-                if len(des2.shape) == 1:
-                    continue
-                
                 matches = bf.match(des1, des2)
 
                 matches = sorted(matches, key = lambda x:x.distance)

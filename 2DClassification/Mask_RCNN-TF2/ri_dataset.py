@@ -13,7 +13,7 @@ from mrcnn.utils import compute_ap
 from mrcnn.model import load_image_gt
 from mrcnn.model import mold_image
 
-import imgaug
+import imgaug.augmenters as iaa
 
 class ri_Dataset(Dataset):
 
@@ -253,16 +253,13 @@ config = ri_config()
 config.display()
 model = MaskRCNN(mode='training', model_dir='./', config=config)
 # model.load_weights('mask_rcnn_coco.h5', by_name=True, exclude=["mrcnn_class_logits", "mrcnn_bbox_fc",  "mrcnn_bbox", "mrcnn_mask"])
-model.train(train_set, test_set, learning_rate=config.LEARNING_RATE, epochs = 15, layers='all', augmentation = imgaug.augmenters.Sometimes(5/6,aug.OneOf(
-                                            [
-                                            imgaug.augmenters.Fliplr(1), 
-                                            imgaug.augmenters.Flipud(1), 
-                                            imgaug.augmenters.Affine(rotate=(-45, 45)), 
-                                            imgaug.augmenters.Affine(rotate=(-90, 90)), 
-                                            imgaug.augmenters.Affine(scale=(0.5, 1.5))
-                                             ]
-                                        )
-                                   ))
+model.train(train_set, test_set, learning_rate=config.LEARNING_RATE, epochs = 15, layers='all', augmentation = iaa.Sometimes(5/6,iaa.OneOf([
+            iaa.Fliplr(1),
+            iaa.Flipud(1),
+            iaa.Affine(rotate=(-45, 45)),
+            iaa.Affine(rotate=(-90, 90)),
+            iaa.Affine(scale=(0.5, 1.5))
+            ])))
 ######################################################################################
 
 ######################################################################################

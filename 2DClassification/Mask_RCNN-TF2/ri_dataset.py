@@ -149,7 +149,7 @@ class ri_config(Config):
     IMAGE_MIN_DIM = 960
     IMAGE_MAX_DIM = 1280
     # Use smaller anchors because our image and objects are small
-    RPN_ANCHOR_SCALES = (8, 16, 32, 64, 128, 256, 512)  # anchor side in pixels
+    RPN_ANCHOR_SCALES = (32, 64, 128, 256, 512)  # anchor side in pixels
     # Reduce training ROIs per image because the images are small and have
     # few objects. Aim to allow ROI sampling to pick 33% positive ROIs.
     TRAIN_ROIS_PER_IMAGE = 20

@@ -8,13 +8,17 @@ from matplotlib.patches import Rectangle
 
 from mrcnn.utils import Dataset
 from mrcnn.config import Config
-from mrcnn.visualize import display_instances
-from mrcnn.utils import extract_bboxes
 from mrcnn.model import MaskRCNN
 from mrcnn.utils import compute_ap
 from mrcnn.model import load_image_gt
 from mrcnn.model import mold_image
 
+from tensorflow.keras.backend import manual_variable_initialization 
+manual_variable_initialization(True)
+
+import tensorflow.compat.v1 as tf
+
+import imgaug.augmenters as iaa
 
 class ri_Dataset(Dataset):
 
@@ -44,10 +48,6 @@ class ri_Dataset(Dataset):
     def load_dataset(self, image_dir, annot_dir, train = True):
 
         self.add_class("dataset", 1, "object")
-        # self.add_class("dataset", 2, "cylinder")
-        # self.add_class("dataset", 3, "car_0027")
-        # self.add_class("dataset", 4, "car_0198")
-        # self.add_class("dataset", 5, "sphere")
 
         for filename in os.listdir(image_dir):
 
@@ -144,16 +144,16 @@ class ri_Dataset(Dataset):
 class ri_config(Config):
 
     NAME = "ri_cfg"
-    NUM_CLASSES = 2
+    NUM_CLASSES = 1 + 1
     BATCH_SIZE = 2
-    IMAGE_MIN_DIM = 960
-    IMAGE_MAX_DIM = 1280
+    IMAGE_MIN_DIM = 480
+    IMAGE_MAX_DIM = 640
     # Use smaller anchors because our image and objects are small
-    RPN_ANCHOR_SCALES = (32, 64, 128, 256, 512)  # anchor side in pixels
-    # Reduce training ROIs per image because the images are small and have
-    # few objects. Aim to allow ROI sampling to pick 33% positive ROIs.
+    # RPN Acnhor scales and ratios to find ROI
+    RPN_ANCHOR_SCALES = (16, 32, 48, 64, 128)
+    RPN_ANCHOR_RATIOS = [0.5, 1, 1.5]
     TRAIN_ROIS_PER_IMAGE = 20
-    DETECTION_MIN_CONFIDENCE = 0.7
+    DETECTION_MIN_CONFIDENCE = 0.5
     STEPS_PER_EPOCH = 816
 
 # define the prediction configuration
@@ -263,7 +263,14 @@ config = ri_config()
 config.display()
 model = MaskRCNN(mode='training', model_dir='./', config=config)
 # model.load_weights('mask_rcnn_coco.h5', by_name=True, exclude=["mrcnn_class_logits", "mrcnn_bbox_fc",  "mrcnn_bbox", "mrcnn_mask"])
-model.train(train_set, test_set, learning_rate=config.LEARNING_RATE, epochs=5, layers='heads')
+model.train(train_set, test_set, learning_rate=config.LEARNING_RATE, epochs = 15, layers='all',
+            augmentation = iaa.Sometimes(5/6,iaa.OneOf([
+            iaa.Fliplr(1),
+            iaa.Flipud(1),
+            iaa.Affine(rotate=(-45, 45)),
+            iaa.Affine(rotate=(-90, 90)),
+            iaa.Affine(scale=(0.5, 1.5))
+            ])))
 ######################################################################################
 
 ######################################################################################
@@ -272,6 +279,7 @@ model.train(train_set, test_set, learning_rate=config.LEARNING_RATE, epochs=5, l
 # model = MaskRCNN(mode='inference', model_dir='./', config=cfg)
 # # load model weights
 # model.load_weights('mask_rcnn_ri_cfg_0005.h5', by_name=True)
+# tf.keras.Model.load_weights(model.keras_model, 'mask_rcnn_ri_cfg_0005.h5', by_name=True)
 ######################################################################################
 
 ######################################################################################

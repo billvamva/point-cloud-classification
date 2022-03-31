@@ -175,19 +175,14 @@ def evaluate_model(dataset, model, cfg):
 	return mAP
 
 # plot a number of photos with ground truth and predictions
-def plot_actual_vs_predicted(dataset, model, cfg, n_images=7):
+def plot_actual_vs_predicted(dataset, model, cfg, n_images=9):
     # load image and mask
     for i in range(n_images):
         # load the image and mask
         image = dataset.load_image(i)
         mask, _ = dataset.load_mask(i)
-        # convert pixel values (e.g. center)
-        scaled_image = mold_image(image, cfg)
-        # convert image into one sample
-        sample = np.expand_dims(scaled_image, 0)
         # make prediction
-        yhat = model.detect(sample, verbose=0)[0]
-        print(yhat['rois'])
+        yhat = model.detect([image], verbose=0)[0]
         # define subplot
         pyplot.subplot(n_images, 2, i*2+1)
         # plot raw pixel data
@@ -213,7 +208,7 @@ def plot_actual_vs_predicted(dataset, model, cfg, n_images=7):
             # draw the box
             ax.add_patch(rect)
             # show the figure
-    #pyplot.show()
+    pyplot.show()
 
 def test_mask_load(train_set):
 

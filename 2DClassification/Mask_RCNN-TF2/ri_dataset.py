@@ -237,8 +237,6 @@ train_set.load_dataset("../range_images/", "../range_images_anot/")
 train_set.prepare()
 print('Train: %d' % len(train_set.image_ids))
 
-test_mask_load(train_set)
-
 
 test_set = ri_Dataset(mapping)
 test_set.load_dataset("../range_images/", "../range_images_anot/", train = False)
@@ -247,17 +245,17 @@ print('Test: %d' % len(test_set.image_ids))
 
 
 ######################################################################################
-# config = ri_config()
-# config.display()
-# model = MaskRCNN(mode='training', model_dir='./', config=config)
-# # model.load_weights('mask_rcnn_coco.h5', by_name=True, exclude=["mrcnn_class_logits", "mrcnn_bbox_fc",  "mrcnn_bbox", "mrcnn_mask"])
-# model.train(train_set, test_set, learning_rate=config.LEARNING_RATE, epochs = 15, layers='all', augmentation = iaa.Sometimes(5/6,iaa.OneOf([
-#             iaa.Fliplr(1),
-#             iaa.Flipud(1),
-#             iaa.Affine(rotate=(-45, 45)),
-#             iaa.Affine(rotate=(-90, 90)),
-#             iaa.Affine(scale=(0.5, 1.5))
-#             ])))
+config = ri_config()
+config.display()
+model = MaskRCNN(mode='training', model_dir='./', config=config)
+# model.load_weights('mask_rcnn_coco.h5', by_name=True, exclude=["mrcnn_class_logits", "mrcnn_bbox_fc",  "mrcnn_bbox", "mrcnn_mask"])
+model.train(train_set, test_set, learning_rate=config.LEARNING_RATE, epochs = 15, layers='all', augmentation = iaa.Sometimes(5/6,iaa.OneOf([
+            iaa.Fliplr(1),
+            iaa.Flipud(1),
+            iaa.Affine(rotate=(-45, 45)),
+            iaa.Affine(rotate=(-90, 90)),
+            iaa.Affine(scale=(0.5, 1.5))
+            ])))
 ######################################################################################
 
 ######################################################################################

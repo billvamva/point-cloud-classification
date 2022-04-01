@@ -139,8 +139,7 @@ class ri_config(Config):
     BATCH_SIZE = 2
     IMAGE_MIN_DIM = 480
     IMAGE_MAX_DIM = 640
-    TRAIN_ROIS_PER_IMAGE = 20
-    DETECTION_MIN_CONFIDENCE = 0.5
+    DETECTION_MIN_CONFIDENCE = 0.7
     STEPS_PER_EPOCH = 850
 
 # define the prediction configuration

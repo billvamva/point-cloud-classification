@@ -10,24 +10,24 @@ ri = range_image(filename=pcd_path)
 
 
 #####################################################################
-clf = SVM_Classifier(model_path= "./models/model1.pkl")
-print("model loaded...")
-fe = Feature_Extractor()
-print("feature extractor created...")
+# clf = SVM_Classifier(model_path= "./models/model1.pkl")
+# print("model loaded...")
+# fe = Feature_Extractor()
+# print("feature extractor created...")
  
-def get_performance_value(model, x_value):
+# def get_performance_value(model, x_value):
     
-    y_value = model.predict(x_value.reshape(1, -1))
+#     y_value = model.predict(x_value.reshape(1, -1))
     
-    proba = model.predict_proba(x_value.reshape(1, -1))
+#     proba = model.predict_proba(x_value.reshape(1, -1))
 
-    return (int(y_value), float(max(proba[0])))
+#     return (int(y_value), float(max(proba[0])))
 
 
-x_value = fe.get_features(ri.output_path)
-print("features extracted...")
-_class, proba = get_performance_value(clf.svm_model, x_value)
-print(_class, proba)
+# x_value = fe.get_features(ri.output_path)
+# print("features extracted...")
+# _class, proba = get_performance_value(clf.svm_model, x_value)
+# print(_class, proba)
 #####################################################################
 
 

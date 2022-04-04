@@ -3,32 +3,16 @@ import matplotlib.pyplot as plt
 import os
 import sys
 sys.path.append("Mask_RCNN")
-from Mask_RCNN.ri_dataset import find_mask
-from mrcnn.config import Config
+from Mask_RCNN.ri_dataset 
 
 import cv2
-import skimage
 
-
-class PredictionConfig(Config):
-# define the name of the configuration
-    NAME = "ri_test_cfg"
-    USE_MINI_MASK = False
-    NUM_CLASSES = 1 + 1
-    GPU_COUNT = 1
-    IMAGES_PER_GPU = 1
 
 class background_subtractor():
     
     def __init__(self, image, blurred_image = None, filename = ''):
         
-        # self.image = skimage.io.imread(image)
         self.image = image
-        if self.image.ndim != 3:
-            self.image = skimage.color.gray2rgb(image)
-        if self.image.shape[-1] == 4:
-            self.image = self.image[..., :3]
-
         self.blurred_image = blurred_image
         self.filename = filename
         self.min_area = 0.0005
@@ -36,7 +20,7 @@ class background_subtractor():
         self.dilate_iter = 5
         self.erode_iter = 5
         self.mask_color = (0.0)
-        self.masked_image = self.ml_background_subtraction(self.image)
+        self.masked_image = self.background_subtraction(self.image, self.blurred_image)
     
     def extract_edges(self, image, blurred_image):
         
@@ -100,31 +84,9 @@ class background_subtractor():
 
         return outputMask
     
-    def ml_background_subtraction(self, image):
-
-        weights_path = './Mask_RCNN/mask_rcnn_ri_cfg_0015.h5'
-
-        boxes = find_mask(image, weights_path, "./Mask_RCNN/", cfg = PredictionConfig())
-
-        y1, x1, y2, x2 = boxes[0]
-
-        mask = np.zeros((image.shape[0], image.shape[1]), dtype="uint8")
+    def ml_background_subtraction():
         
-        cv2.rectangle(mask, (x1, y1), (x2, y2), 255, -1)
-
-        output = cv2.bitwise_and(image, image, mask = mask)
-
-        grayscale = cv2.cvtColor(output, cv2.COLOR_BGR2GRAY)
-
-        thresholded = self.crop_image(grayscale)
-
-        return thresholded
         
-    def crop_image(self, img, tol=0):
-        # img is 2D image data
-        # tol  is tolerance
-        mask = img>tol
-        return img[np.ix_(mask.any(1),mask.any(0))]
     
     def save_contour(self, contour_info, image):
         
@@ -157,7 +119,4 @@ class background_subtractor():
 
 
 
- 
-if __name__ == "__main__":
-
-    bg_sub = background_subtractor("range_images/car_0027_flat_25_-1_422.png")
+    

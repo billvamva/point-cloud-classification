@@ -22,8 +22,7 @@ class background_subtractor():
     
     def __init__(self, image, blurred_image = None, filename = ''):
         
-        # self.image = skimage.io.imread(image)
-        self.image = image
+        self.image = skimage.io.imread(image)
         if self.image.ndim != 3:
             self.image = skimage.color.gray2rgb(image)
         if self.image.shape[-1] == 4:
@@ -36,7 +35,7 @@ class background_subtractor():
         self.dilate_iter = 5
         self.erode_iter = 5
         self.mask_color = (0.0)
-        self.masked_image = self.ml_background_subtraction(self.image)
+        self.mask_coords = self.ml_background_subtraction(self.image)
     
     def extract_edges(self, image, blurred_image):
         
@@ -116,15 +115,16 @@ class background_subtractor():
 
         grayscale = cv2.cvtColor(output, cv2.COLOR_BGR2GRAY)
 
-        thresholded = self.crop_image(grayscale)
+        thresholded, _ = cv2.threshold(grayscale, 0, 255, cv2.THRESH_OTSU)
 
-        return thresholded
-        
-    def crop_image(self, img, tol=0):
+        cv2.imwrite("./b_range_images/test_rm.png", thresholded)
+    
+    def crop_image(img,tol=0):
         # img is 2D image data
         # tol  is tolerance
         mask = img>tol
         return img[np.ix_(mask.any(1),mask.any(0))]
+        
     
     def save_contour(self, contour_info, image):
         
@@ -160,4 +160,4 @@ class background_subtractor():
  
 if __name__ == "__main__":
 
-    bg_sub = background_subtractor("range_images/car_0027_flat_25_-1_422.png")
+    bg_sub = background_subtractor("range_images/car_0027_flat_25_1_171.png")

@@ -24,7 +24,7 @@ class range_image():
 
         self.filename = filename
         self.obj_class = obj_class
-        self.folder = fold
+        self.path = path
         self.pcd = self.open_pcd(filename, path)
         self.dst_path = dst_path
         self.vox = vox
@@ -291,11 +291,11 @@ class range_image():
         """Saves image to local directory
         """
 
-        els = self.folder.split("_")
+        els = self.path.split("_")
 
         if self.obj_class == 'car':
             
-            output_path = f"{dst_path}{self.obj_class}_{els[1:3]}_{self.filename.split('.')[0]}.png" 
+            output_path = f"{dst_path}{self.obj_class}_{els[2]}_{self.filename.split('.')[0]}.png" 
         
         elif self.obj_class:
             
@@ -313,8 +313,6 @@ class range_image():
             
         fig.savefig(output_path)
         plt.close(fig)
-        
-        print(output_path)
 
         return output_path
 

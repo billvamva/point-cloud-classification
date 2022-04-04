@@ -11,7 +11,7 @@ from background_subtractor import background_subtractor
 
 class range_image():
     
-    def __init__(self, filename, obj_class = None, dst_path = "./nobg_range_images/",vox = 0.01, path = "", fold = '', bg_rm = False):
+    def __init__(self, filename, obj_class = None, dst_path = "./nobg_range_images/",vox = 0.01, path = "", bg_rm = False):
         """
         Range Image Construction Class
 
@@ -23,8 +23,8 @@ class range_image():
         """
 
         self.filename = filename
+        print(self.filename)
         self.obj_class = obj_class
-        self.folder = fold
         self.pcd = self.open_pcd(filename, path)
         self.dst_path = dst_path
         self.vox = vox
@@ -291,11 +291,11 @@ class range_image():
         """Saves image to local directory
         """
 
-        els = self.folder.split("_")
+        els = self.filename.split("_")
 
         if self.obj_class == 'car':
             
-            output_path = f"{dst_path}{self.obj_class}_{els[1:3]}_{self.filename.split('.')[0]}.png" 
+            output_path = f"{dst_path}{self.obj_class}_{els[1]}_{self.filename.split('.')[0]}.png" 
         
         elif self.obj_class:
             
@@ -313,8 +313,6 @@ class range_image():
             
         fig.savefig(output_path)
         plt.close(fig)
-        
-        print(output_path)
 
         return output_path
 
@@ -346,6 +344,6 @@ if __name__ == "__main__":
 
             if filename.split('.')[-1] == "pcd":
                 
-                range_im = range_image(filename, obj_class = obj_class, path = directory_str + folder_str, fold = folder_str, bg_rm = True)
+                range_im = range_image(filename, obj_class = obj_class, path = directory_str + folder_str, bg_rm = True)
             
     

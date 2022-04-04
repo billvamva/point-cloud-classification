@@ -22,8 +22,7 @@ class background_subtractor():
     
     def __init__(self, image, blurred_image = None, filename = ''):
         
-        # self.image = skimage.io.imread(image)
-        self.image = image
+        self.image = skimage.io.imread(image)
         if self.image.ndim != 3:
             self.image = skimage.color.gray2rgb(image)
         if self.image.shape[-1] == 4:

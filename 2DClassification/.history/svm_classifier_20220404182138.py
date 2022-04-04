@@ -148,4 +148,4 @@ if __name__ == "__main__":
 
     features, labels = feature_extractor.features, feature_extractor.labels
 
-    classifier = SVM_Classifier(features, labels, param_grid, eval = True)
+    classifier = SVM_Classifier(features, labels, param_grid)

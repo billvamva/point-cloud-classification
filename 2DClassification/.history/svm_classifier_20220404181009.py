@@ -1,4 +1,3 @@
-from copyreg import constructor
 import pandas as pd
 import numpy as np
 import os
@@ -8,7 +7,7 @@ import cv2
 
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import ConfusionMatrixDisplay
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from sklearn.svm import SVC
 from sklearn.model_selection import GridSearchCV
@@ -17,15 +16,12 @@ from feature_extraction import Feature_Extractor
 
 class SVM_Classifier():
     
-    def __init__(self, features = np.array([]), labels = [], param_grid = {},  orb_des = None, model_path = None, n_components = 500, orb = False, eval = False):
+    def __init__(self, features = np.array([]), labels = [], param_grid = {},  orb_des = None, model_path = None, n_components = 500, orb = False):
         
         self.model_path = model_path
-        self.eval = eval
 
         if self.model_path:
             self.svm_model = self.load_model(self.model_path)
-            if self.eval:
-                self.X_train, self.X_test, self.y_train, self.y_test = self.split_data(self.features, self.labels)
         
         elif not orb:
             self.features = features
@@ -39,6 +35,8 @@ class SVM_Classifier():
             self.evaluate_model(self.svm_model, self.X_test, self.y_test)
         
         
+    
+    
     def split_data(self, scaled_features, labels):
         
         X = pd.DataFrame(scaled_features)
@@ -87,12 +85,6 @@ class SVM_Classifier():
            model = pickle.load(f)
         
         return model
-    
-    def plot_confusion_matrix(self, X_test, y_test, model):
-        
-        y_pred = model.predict(X_test)
-
-        confusion_matrix(y_test, y_pred, labels=['1', '2', '3', '4'])
         
     def match_orb_features(self, des1):
         """Match Orb Features using the Bf matcher
@@ -148,4 +140,4 @@ if __name__ == "__main__":
 
     features, labels = feature_extractor.features, feature_extractor.labels
 
-    classifier = SVM_Classifier(features, labels, param_grid, eval = True)
+    classifier = SVM_Classifier(features, labels, param_grid)

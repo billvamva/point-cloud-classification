@@ -39,6 +39,8 @@ class SVM_Classifier():
             self.evaluate_model(self.svm_model, self.X_test, self.y_test)
         
         
+    
+    
     def split_data(self, scaled_features, labels):
         
         X = pd.DataFrame(scaled_features)
@@ -148,4 +150,4 @@ if __name__ == "__main__":
 
     features, labels = feature_extractor.features, feature_extractor.labels
 
-    classifier = SVM_Classifier(features, labels, param_grid, eval = True)
+    classifier = SVM_Classifier(features, labels, param_grid)

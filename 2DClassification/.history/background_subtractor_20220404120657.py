@@ -20,7 +20,7 @@ class PredictionConfig(Config):
 
 class background_subtractor():
     
-    def __init__(self, image, config = PredictionConfig(), blurred_image = None, filename = ''):
+    def __init__(self, image, blurred_image = None, filename = ''):
         
         # self.image = skimage.io.imread(image)
         self.image = image
@@ -29,7 +29,6 @@ class background_subtractor():
         if self.image.shape[-1] == 4:
             self.image = self.image[..., :3]
 
-        self.config = config
         self.blurred_image = blurred_image
         self.filename = filename
         self.min_area = 0.0005
@@ -37,7 +36,7 @@ class background_subtractor():
         self.dilate_iter = 5
         self.erode_iter = 5
         self.mask_color = (0.0)
-        self.masked_image = self.ml_background_subtraction(self.image, self.config)
+        self.masked_image = self.ml_background_subtraction(self.image)
     
     def extract_edges(self, image, blurred_image):
         
@@ -101,11 +100,11 @@ class background_subtractor():
 
         return outputMask
     
-    def ml_background_subtraction(self, image, config):
+    def ml_background_subtraction(self, image):
 
         weights_path = './Mask_RCNN/mask_rcnn_ri_cfg_0012.h5'
 
-        boxes = find_mask(image, weights_path, "./Mask_RCNN/", cfg = config)
+        boxes = find_mask(image, weights_path, "./Mask_RCNN/", cfg = PredictionConfig())
 
         y1, x1, y2, x2 = boxes[0]
 
@@ -118,8 +117,6 @@ class background_subtractor():
         grayscale = cv2.cvtColor(output, cv2.COLOR_BGR2GRAY)
 
         thresholded = self.crop_image(grayscale)
-
-        cv2.imwrite("./b_range_images/" + self.filename, thresholded)
 
         return thresholded
         
@@ -163,10 +160,4 @@ class background_subtractor():
  
 if __name__ == "__main__":
 
-    origin_path = "./range_images/"
-
-    for file in os.listdir(origin_path):
-        
-        filename = os.fsdecode(file)
-        
-        bg_sub = background_subtractor(skimage.io.imread(origin_path + filename), filename = filename)
+    bg_sub = background_subtractor(skimage.io.imread("range_images/car_0027_flat_25_-1_422.png"))

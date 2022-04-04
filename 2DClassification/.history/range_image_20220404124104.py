@@ -7,7 +7,6 @@ import os
 import cv2
 import time
 
-from mrcnn.config import Config
 from background_subtractor import background_subtractor
 
 class PredictionConfig(Config):
@@ -17,7 +16,7 @@ class PredictionConfig(Config):
     NUM_CLASSES = 1 + 1
     GPU_COUNT = 1
     IMAGES_PER_GPU = 1
-
+    
 class range_image():
     
     def __init__(self, filename, obj_class = None, dst_path = "./nobg_range_images/",vox = 0.01, path = "", fold = '', bg_rm = False):
@@ -52,7 +51,7 @@ class range_image():
         self.s_image, self.s_blurred_image = self.form_img(self.s_range_data)
         
         if self.bg_rm:
-            self.background_subtractor = background_subtractor(self.image, config = PredictionConfig())
+            self.background_subtractor = background_subtractor(self.image)
             self.cropped_image = self.background_subtractor.masked_image
         
         else:
@@ -316,8 +315,16 @@ class range_image():
 
             output_path = dst_path + time.strftime("%Y%m%d-%H%M%S") + ".png"
             
-
-        cv2.imwrite(output_path, self.cropped_image)
+        fig = plt.figure(frameon=False)
+        ax = plt.Axes(fig, [0., 0., 1., 1.])
+        ax.set_axis_off()
+        fig.add_axes(ax)    
+        ax.imshow(self.cropped_image, aspect='auto')
+            
+        fig.savefig(output_path)
+        plt.close(fig)
+        
+        print(output_path)
 
         return output_path
 
@@ -349,6 +356,6 @@ if __name__ == "__main__":
 
             if filename.split('.')[-1] == "pcd":
                 
-                range_im = range_image(filename, obj_class = obj_class, path = directory_str + folder_str, fold = folder_str, bg_rm = False)
+                range_im = range_image(filename, obj_class = obj_class, path = directory_str + folder_str, fold = folder_str, bg_rm = True)
             
     

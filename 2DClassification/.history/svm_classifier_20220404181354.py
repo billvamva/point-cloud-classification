@@ -1,4 +1,3 @@
-from copyreg import constructor
 import pandas as pd
 import numpy as np
 import os
@@ -8,7 +7,7 @@ import cv2
 
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import ConfusionMatrixDisplay
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from sklearn.svm import SVC
 from sklearn.model_selection import GridSearchCV
@@ -39,6 +38,8 @@ class SVM_Classifier():
             self.evaluate_model(self.svm_model, self.X_test, self.y_test)
         
         
+    
+    
     def split_data(self, scaled_features, labels):
         
         X = pd.DataFrame(scaled_features)
@@ -90,9 +91,22 @@ class SVM_Classifier():
     
     def plot_confusion_matrix(self, X_test, y_test, model):
         
-        y_pred = model.predict(X_test)
+        titles_options = [
+    ("Confusion matrix, without normalization", None),
+    ("Normalized confusion matrix", "true"),]
 
-        confusion_matrix(y_test, y_pred, labels=['1', '2', '3', '4'])
+        for title, normalize in titles_options:
+            disp = ConfusionMatrixDisplay.from_estimator(
+                model,
+                X_test,
+                y_test,
+                display_labels=labels.label.str[:2].unique(),
+                cmap=plt.cm.Blues,
+                normalize=normalize,
+            )
+            disp.ax_.set_title(title)
+            print(title)
+            print(disp.confusion_matrix)
         
     def match_orb_features(self, des1):
         """Match Orb Features using the Bf matcher
@@ -148,4 +162,4 @@ if __name__ == "__main__":
 
     features, labels = feature_extractor.features, feature_extractor.labels
 
-    classifier = SVM_Classifier(features, labels, param_grid, eval = True)
+    classifier = SVM_Classifier(features, labels, param_grid)

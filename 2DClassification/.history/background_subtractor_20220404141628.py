@@ -119,7 +119,7 @@ class background_subtractor():
 
         thresholded = self.crop_image(grayscale)
 
-        cv2.imwrite("./b_range_images/" + self.filename, thresholded)
+        cv2.imwrite("./b_range_images/" = self.filename, thresholded)
 
         return thresholded
         

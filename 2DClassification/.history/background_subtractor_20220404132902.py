@@ -119,7 +119,7 @@ class background_subtractor():
 
         thresholded = self.crop_image(grayscale)
 
-        cv2.imwrite("./b_range_images/" + self.filename, thresholded)
+        cv2.imwrite("./b_range_images/test.png", thresholded)
 
         return thresholded
         
@@ -163,10 +163,4 @@ class background_subtractor():
  
 if __name__ == "__main__":
 
-    origin_path = "./range_images/"
-
-    for file in os.listdir(origin_path):
-        
-        filename = os.fsdecode(file)
-        
-        bg_sub = background_subtractor(skimage.io.imread(origin_path + filename), filename = filename)
+    bg_sub = background_subtractor(skimage.io.imread("range_images/car_0027_flat_25_-1_246.png"))

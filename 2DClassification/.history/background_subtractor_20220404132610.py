@@ -4,23 +4,15 @@ import os
 import sys
 sys.path.append("Mask_RCNN")
 from Mask_RCNN.ri_dataset import find_mask
-from mrcnn.config import Config
 
 import cv2
 import skimage
 
 
-class PredictionConfig(Config):
-# define the name of the configuration
-    NAME = "ri_test_cfg"
-    USE_MINI_MASK = False
-    NUM_CLASSES = 1 + 1
-    GPU_COUNT = 1
-    IMAGES_PER_GPU = 1
 
 class background_subtractor():
     
-    def __init__(self, image, config = PredictionConfig(), blurred_image = None, filename = ''):
+    def __init__(self, image, config = None, blurred_image = None, filename = ''):
         
         # self.image = skimage.io.imread(image)
         self.image = image
@@ -119,7 +111,7 @@ class background_subtractor():
 
         thresholded = self.crop_image(grayscale)
 
-        cv2.imwrite("./b_range_images/" + self.filename, thresholded)
+        cv2.imwrite("./b_range_images/test.png", thresholded)
 
         return thresholded
         
@@ -163,10 +155,4 @@ class background_subtractor():
  
 if __name__ == "__main__":
 
-    origin_path = "./range_images/"
-
-    for file in os.listdir(origin_path):
-        
-        filename = os.fsdecode(file)
-        
-        bg_sub = background_subtractor(skimage.io.imread(origin_path + filename), filename = filename)
+    bg_sub = background_subtractor(skimage.io.imread("nobg_range_images/car_0027_flat_25_-1_246.png"))

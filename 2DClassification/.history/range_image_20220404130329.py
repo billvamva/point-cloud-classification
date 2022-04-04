@@ -349,6 +349,6 @@ if __name__ == "__main__":
 
             if filename.split('.')[-1] == "pcd":
                 
-                range_im = range_image(filename, obj_class = obj_class, path = directory_str + folder_str, fold = folder_str, bg_rm = False)
+                range_im = range_image(filename, obj_class = obj_class, path = directory_str + folder_str, fold = folder_str, bg_rm = True)
             
     

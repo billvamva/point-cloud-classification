@@ -317,7 +317,7 @@ class range_image():
             output_path = dst_path + time.strftime("%Y%m%d-%H%M%S") + ".png"
             
 
-        cv2.imwrite(output_path, self.cropped_image)
+        cv2.imwrite("output_path", self.cropped_image)
 
         return output_path
 
@@ -349,6 +349,6 @@ if __name__ == "__main__":
 
             if filename.split('.')[-1] == "pcd":
                 
-                range_im = range_image(filename, obj_class = obj_class, path = directory_str + folder_str, fold = folder_str, bg_rm = False)
+                range_im = range_image(filename, obj_class = obj_class, path = directory_str + folder_str, fold = folder_str, bg_rm = True)
             
     

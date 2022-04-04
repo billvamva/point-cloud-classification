@@ -28,8 +28,6 @@ class SVM_Classifier():
                 self.features = features
                 self.labels = labels
                 self.X_train, self.X_test, self.y_train, self.y_test = self.split_data(self.features, self.labels)
-                self.evaluate_model(self.svm_model, self.X_test, self.y_test)
-                self._confusion_matrix(self.X_test, self.y_test, self.svm_model)
         
         elif not orb:
             self.features = features

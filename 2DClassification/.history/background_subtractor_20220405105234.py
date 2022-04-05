@@ -103,8 +103,6 @@ class background_subtractor():
     
     def ml_background_subtraction(self, image, config):
 
-        print(self.filename)
-
         weights_path = './Mask_RCNN/mask_rcnn_ri_cfg_0012.h5'
 
         boxes = find_mask(image, weights_path, "./Mask_RCNN/", cfg = config)

@@ -114,7 +114,7 @@ class Feature_Extractor():
         cor_arr =[]
 
         # generate patches of size 7 by 7
-        total_patches = skimage.extract_patches_2d(img, (self.glcm_window_size, self.glcm_window_size))
+        total_patches =  
         
         set_patches = total_patches[::self.glcm_step_size]
         

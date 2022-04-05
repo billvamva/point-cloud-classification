@@ -7,12 +7,12 @@ import cv2
 
 from skimage.feature import hog
 from skimage.feature import greycomatrix, greycoprops
-from sklearn.feature_extraction import image as skimage
+from sklearn.feature_extraction import image
 
 
 class Feature_Extractor():
     
-    def __init__(self, path = "", data_path = "./range_images/", filename = "", hog_glcm = False, glcm_window_size = 20, glcm_step_size = 100, orb = False):
+    def __init__(self, path = "", data_path = "./range_images/", filename = "", hog_glcm = False, glcm_window_size = 7, glcm_step_size = 500, orb = False):
         """Extract features using a variety of methods
 
         Args:
@@ -114,7 +114,7 @@ class Feature_Extractor():
         cor_arr =[]
 
         # generate patches of size 7 by 7
-        total_patches = skimage.extract_patches_2d(img, (self.glcm_window_size, self.glcm_window_size))
+        total_patches = np.lib.stride_tricks.sliding_window_view(img, (self.glcm_window_size, self.glcm_window_size))
         
         set_patches = total_patches[::self.glcm_step_size]
         

@@ -7,7 +7,7 @@ import cv2
 
 from skimage.feature import hog
 from skimage.feature import greycomatrix, greycoprops
-from sklearn.feature_extraction import image as skimage
+from sklearn.feature_extraction import image
 
 
 class Feature_Extractor():
@@ -114,7 +114,7 @@ class Feature_Extractor():
         cor_arr =[]
 
         # generate patches of size 7 by 7
-        total_patches = skimage.extract_patches_2d(img, (self.glcm_window_size, self.glcm_window_size))
+        total_patches = np.lib.stride_tricks.sliding_window_view(img, (self.glcm_window_size, self.glcm_window_size))
         
         set_patches = total_patches[::self.glcm_step_size]
         

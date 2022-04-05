@@ -122,7 +122,6 @@ class Feature_Extractor():
         for patches in set_patches:
             for patch in patches:
                 # glcm features
-                print(patch.shape)
                 g = greycomatrix(patch, [5], [0, np.pi/2], levels=256)
                 contrast_arr.append(greycoprops(g, 'contrast')[0,0]) 
                 dis_arr.append(greycoprops(g, 'dissimilarity')[0,0])

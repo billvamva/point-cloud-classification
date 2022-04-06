@@ -53,12 +53,10 @@ class Feature_Extractor():
         
         img = Image.open(directory)
         img = np.asarray(img)
-
         if img.ndim != 2:
             np_img = img[:, :, :1]
         else:
             np_img = img
-
         return np_img 
     
     def get_cv_image(self, directory):

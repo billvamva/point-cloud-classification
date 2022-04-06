@@ -153,7 +153,7 @@ class SVM_Classifier():
 
 if __name__ == "__main__":
     
-    path = "./b_range_images/"
+    path = "./nobg_range_images/"
     
     param_grid={'C':[0.1,1],'gamma':[0.0001,0.001,0.1],'kernel':['rbf','poly']}
 

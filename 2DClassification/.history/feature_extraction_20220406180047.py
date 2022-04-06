@@ -72,9 +72,9 @@ class Feature_Extractor():
         hog_features = self.get_hog_features(self.get_image(file))
         # glcm_features = self.get_glcm_features(self.get_image(file))
 
-        # img_features = np.hstack((hog_features, glcm_features))
+        img_features = np.hstack((hog_features, glcm_features))
 
-        return hog_features
+        return img_features
     
     def get_hog_features(self, img):
         """

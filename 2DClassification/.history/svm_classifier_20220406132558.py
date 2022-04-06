@@ -83,7 +83,7 @@ class SVM_Classifier():
     
     def save_model(self, model):
         
-        with open('./models/model1_nobg.pkl', 'wb') as f:
+        with open('./models/model1_bg.pkl', 'wb') as f:
             pickle.dump(model, f)
                     
     def load_model(self, path):

@@ -126,11 +126,11 @@ class SVM_Classifier():
 
                 des2 = np.loadtxt(directory_str + filename, dtype=np.uint8)
                 
-                if type(des1) == type(None):
+                if type(des1) == type(None) or type(des2) == type(None):
                     
                     return 'undetected' 
                 
-                if len(des1.shape) == 1 or len(des2.shape) == 1 or type(des2) == type(None):
+                if len(des1.shape) == 1 or len(des2.shape) == 1:
                     continue
 
                 if des1.all() == des2.all():

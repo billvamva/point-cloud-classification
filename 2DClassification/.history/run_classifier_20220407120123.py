@@ -48,7 +48,7 @@ y_pred = []
 filename = "cube_no_25_-1_118.png"
 _, orb_features = fe.get_orb_features(fe.get_cv_image(path + filename))
 _class, proba = clf.match_orb_features(orb_features) 
-print(_class)
+
 
 
 for count, file in enumerate(os.listdir(path)):

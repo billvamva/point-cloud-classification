@@ -45,12 +45,11 @@ y_pred = []
 
 for count, file in enumerate(os.listdir(path)):
     filename = os.fsdecode(file)
-    if filename.split(".")[-1] == ".png":
-        print(f"{count}/{len(os.listdir(path))}, {filename}")
-        y_test.append(filename.split("_")[0])
-        _, orb_features = fe.get_orb_features(fe.get_cv_image(path + filename))
-        _class, proba = clf.match_orb_features(orb_features) 
-        y_pred.append(_class)
+    print(f"{count}/{len(os.listdir(path))}, {filename}")
+    y_test.append(filename.split("_")[0])
+    _, orb_features = fe.get_orb_features(fe.get_cv_image(path + filename))
+    _class, proba = clf.match_orb_features(orb_features) 
+    y_pred.append(_class)
 
 print(accuracy_score(y_test, y_pred))
 

@@ -208,7 +208,7 @@ def plot_actual_vs_predicted(dataset, model, cfg, n_images=5):
 
 def test_mask_load(train_set):
 
-    for i in range(4):
+    for i in range(9):
     	# define subplot
         pyplot.subplot(330 + 1 + i)
         # plot raw pixel data
@@ -235,8 +235,6 @@ def generate_datasets():
     test_set.prepare()
     print('Test: %d' % len(test_set.image_ids))
 
-    return train_set, test_set
-
 
 def train_model(config, train_set, test_set):
     config = ri_config()
@@ -246,17 +244,15 @@ def train_model(config, train_set, test_set):
     model.train(train_set, test_set, learning_rate=config.LEARNING_RATE, epochs = 15, layers='all', augmentation = iaa.Sometimes(5/6,iaa.OneOf([
                 iaa.Affine(scale=(0.5, 1.5))
                 ])))
-    
-    return model
 
-def load_model():
+def make_prediction(cfg, train_set):
     cfg = PredictionConfig()
     # define the model
     model = MaskRCNN(mode='inference', model_dir='./', config=cfg)
     # load model weights
     model.load_weights('mask_rcnn_ri_cfg_0012.h5', by_name=True)
-
-    return model
+    yhat = model.detect([train_set.load_image(809)])[0]
+    print(yhat['rois'])
 ######################################################################################
 
 ######################################################################################
@@ -269,13 +265,10 @@ def load_model():
 ######################################################################################
 
 ######################################################################################
-train_set, test_set = generate_datasets()
-model = load_model()
-cfg = PredictionConfig()
-# plot predictions for train dataset
-plot_actual_vs_predicted(train_set, model, cfg)
-# plot predictions for test dataset
-plot_actual_vs_predicted(test_set, model, cfg)
+# # plot predictions for train dataset
+# plot_actual_vs_predicted(train_set, model, cfg)
+# # plot predictions for test dataset
+# plot_actual_vs_predicted(test_set, model, cfg)
 ######################################################################################
 
 

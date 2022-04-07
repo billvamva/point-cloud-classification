@@ -249,14 +249,13 @@ def train_model(config, train_set, test_set):
     
     return model
 
-def load_model():
+def load_model(cfg, train_set):
     cfg = PredictionConfig()
     # define the model
     model = MaskRCNN(mode='inference', model_dir='./', config=cfg)
     # load model weights
     model.load_weights('mask_rcnn_ri_cfg_0012.h5', by_name=True)
-
-    return model
+    yhat = model.detect([train_set.load_image(809)])[0]
 ######################################################################################
 
 ######################################################################################
@@ -269,9 +268,6 @@ def load_model():
 ######################################################################################
 
 ######################################################################################
-train_set, test_set = generate_datasets()
-model = load_model()
-cfg = PredictionConfig()
 # plot predictions for train dataset
 plot_actual_vs_predicted(train_set, model, cfg)
 # plot predictions for test dataset

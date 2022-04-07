@@ -205,10 +205,9 @@ def plot_actual_vs_predicted(dataset, model, cfg, n_images=5):
             # show the figure
     pyplot.show()
 
-
 def test_mask_load(train_set):
 
-    for i in range(4):
+    for i in range(9):
     	# define subplot
         pyplot.subplot(330 + 1 + i)
         # plot raw pixel data
@@ -221,42 +220,38 @@ def test_mask_load(train_set):
         # show the figure
     pyplot.show()
 
-def generate_datasets():
-    mapping = ri_Dataset.map_ids()
+mapping = ri_Dataset.map_ids()
 
-    train_set = ri_Dataset(mapping)
-    train_set.load_dataset("../range_images/", "../range_images_anot/")
-    train_set.prepare()
-    print('Train: %d' % len(train_set.image_ids))
-
-
-    test_set = ri_Dataset(mapping)
-    test_set.load_dataset("../range_images/", "../range_images_anot/", train = False)
-    test_set.prepare()
-    print('Test: %d' % len(test_set.image_ids))
-
-    return train_set, test_set
+train_set = ri_Dataset(mapping)
+train_set.load_dataset("../range_images/", "../range_images_anot/")
+train_set.prepare()
+print('Train: %d' % len(train_set.image_ids))
 
 
-def train_model(config, train_set, test_set):
-    config = ri_config()
-    config.display()
-    model = MaskRCNN(mode='training', model_dir='./', config=config)
-    # model.load_weights('mask_rcnn_coco.h5', by_name=True, exclude=["mrcnn_class_logits", "mrcnn_bbox_fc",  "mrcnn_bbox", "mrcnn_mask"])
-    model.train(train_set, test_set, learning_rate=config.LEARNING_RATE, epochs = 15, layers='all', augmentation = iaa.Sometimes(5/6,iaa.OneOf([
-                iaa.Affine(scale=(0.5, 1.5))
-                ])))
-    
-    return model
+test_set = ri_Dataset(mapping)
+test_set.load_dataset("../range_images/", "../range_images_anot/", train = False)
+test_set.prepare()
+print('Test: %d' % len(test_set.image_ids))
 
-def load_model():
-    cfg = PredictionConfig()
-    # define the model
-    model = MaskRCNN(mode='inference', model_dir='./', config=cfg)
-    # load model weights
-    model.load_weights('mask_rcnn_ri_cfg_0012.h5', by_name=True)
 
-    return model
+# ######################################################################################
+# config = ri_config()
+# config.display()
+# model = MaskRCNN(mode='training', model_dir='./', config=config)
+# # model.load_weights('mask_rcnn_coco.h5', by_name=True, exclude=["mrcnn_class_logits", "mrcnn_bbox_fc",  "mrcnn_bbox", "mrcnn_mask"])
+# model.train(train_set, test_set, learning_rate=config.LEARNING_RATE, epochs = 15, layers='all', augmentation = iaa.Sometimes(5/6,iaa.OneOf([
+#             iaa.Affine(scale=(0.5, 1.5))
+#             ])))
+######################################################################################
+
+######################################################################################
+# cfg = PredictionConfig()
+# # define the model
+# model = MaskRCNN(mode='inference', model_dir='./', config=cfg)
+# # load model weights
+# model.load_weights('mask_rcnn_ri_cfg_0012.h5', by_name=True)
+# yhat = model.detect([train_set.load_image(809)])[0]
+# print(yhat['rois'])
 ######################################################################################
 
 ######################################################################################
@@ -269,13 +264,10 @@ def load_model():
 ######################################################################################
 
 ######################################################################################
-train_set, test_set = generate_datasets()
-model = load_model()
-cfg = PredictionConfig()
-# plot predictions for train dataset
-plot_actual_vs_predicted(train_set, model, cfg)
-# plot predictions for test dataset
-plot_actual_vs_predicted(test_set, model, cfg)
+# # plot predictions for train dataset
+# plot_actual_vs_predicted(train_set, model, cfg)
+# # plot predictions for test dataset
+# plot_actual_vs_predicted(test_set, model, cfg)
 ######################################################################################
 
 

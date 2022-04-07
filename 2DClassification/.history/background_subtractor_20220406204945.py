@@ -167,7 +167,7 @@ if __name__ == "__main__":
 
     origin_path = "./range_images/"
 
-    for file in os.listdir(origin_path)[600:]:
+    for file in os.listdir(origin_path)[500:]:
         
         filename = os.fsdecode(file)
         

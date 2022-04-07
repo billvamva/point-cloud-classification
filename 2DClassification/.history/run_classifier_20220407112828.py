@@ -1,7 +1,6 @@
 import sys
 import os
 from sklearn.metrics import accuracy_score
-from sklearn.metrics import confusion_matrix
 from multiprocessing import Process
 
 # from range_image import range_image
@@ -45,15 +44,7 @@ path = './range_images/'
 y_test = []
 y_pred = []
 
-filename = "cube_no_25_-1_118.png"
-_, orb_features = fe.get_orb_features(fe.get_cv_image(path + filename))
-_class, proba = clf.match_orb_features(orb_features) 
-print(_class)
-
-
-
-for count, file in enumerate(os.listdir(path)):
-    filename = os.fsdecode(file)
+def orb_run(filename):
     if filename.split(".")[-1] == "png":
         print(f"{count}/{len(os.listdir(path))}, {filename}")
         y_test.append(filename.split("_")[0])
@@ -61,8 +52,10 @@ for count, file in enumerate(os.listdir(path)):
         _class, proba = clf.match_orb_features(orb_features) 
         y_pred.append(_class)
 
+for count, file in enumerate(os.listdir(path)):
+    filename = os.fsdecode(file)
+
 print(accuracy_score(y_test, y_pred))
-print(confusion_matrix(y_test, y_pred, normalize = 'true'))
 
 
 #####################################################################

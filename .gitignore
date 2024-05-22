@@ -10,11 +10,13 @@ surf_test/
 *.icloud
 *.skp
 .DS_Store
+.DS_Store.orig
 *.png
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
+.vscode/
 
 # C extensions
 *.so
